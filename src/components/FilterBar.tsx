@@ -146,7 +146,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md + 2,
     paddingTop: spacing.sm,
     paddingBottom: 4,
     backgroundColor: colors.background,

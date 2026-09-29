@@ -7,9 +7,9 @@ import {
   RefreshControl,
   ActivityIndicator,
   Text,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTasks } from '../hooks/useTasks';
 import { Header } from '../components/Header';
@@ -19,7 +19,7 @@ import { TaskModal } from '../components/TaskModal';
 import { DeleteConfirmModal } from '../components/DeleteConfirmModal';
 import { EmptyState } from '../components/EmptyState';
 import { Task } from '../types/task';
-import { colors, spacing, borderRadius } from '../theme';
+import { colors, spacing } from '../theme';
 
 export const HomeScreen: React.FC = () => {
   const {
@@ -39,7 +39,6 @@ export const HomeScreen: React.FC = () => {
     handleUpdateTask,
     handleDeleteTask,
     handleToggleStatus,
-    isLiveFirestore,
   } = useTasks();
 
   // Modal states
@@ -74,33 +73,36 @@ export const HomeScreen: React.FC = () => {
     setSearchQuery('');
   };
 
+  const renderHeader = () => (
+    <View>
+      {/* App Header with TF Brand & Stats */}
+      <Header stats={stats} />
+
+      {/* Search & Filter Bar */}
+      <FilterBar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusChange={setStatusFilter}
+        priorityFilter={priorityFilter}
+        onPriorityChange={setPriorityFilter}
+        stats={stats}
+      />
+
+      {/* Error Banner if any */}
+      {Boolean(error) && (
+        <View style={styles.errorBanner}>
+          <Ionicons name="warning-outline" size={16} color={colors.danger} />
+          <Text style={styles.errorBannerText}>{error}</Text>
+        </View>
+      )}
+    </View>
+  );
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <View style={styles.container}>
-        {/* App Header & Live Stats */}
-        <Header stats={stats} isLiveFirestore={isLiveFirestore} />
-
-        {/* Search & Filter Bar */}
-        <FilterBar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          priorityFilter={priorityFilter}
-          onPriorityChange={setPriorityFilter}
-          stats={stats}
-        />
-
-        {/* Error Banner */}
-        {Boolean(error) && (
-          <View style={styles.errorBanner}>
-            <Ionicons name="warning-outline" size={16} color={colors.danger} />
-            <Text style={styles.errorBannerText}>{error}</Text>
-          </View>
-        )}
-
-        {/* Task List */}
         {loading && !refreshing ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#2563EB" />
@@ -110,6 +112,7 @@ export const HomeScreen: React.FC = () => {
           <FlatList
             data={filteredTasks}
             keyExtractor={(item) => item.id}
+            ListHeaderComponent={renderHeader}
             renderItem={({ item }) => (
               <TaskCard
                 task={item}
@@ -138,7 +141,7 @@ export const HomeScreen: React.FC = () => {
           />
         )}
 
-        {/* Floating Action Button (FAB) in Royal Blue */}
+        {/* Floating Action Button (FAB) */}
         <TouchableOpacity
           style={styles.fab}
           onPress={openCreateModal}
@@ -181,8 +184,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   listContent: {
-    paddingTop: spacing.xs,
-    paddingBottom: 95,
+    paddingBottom: 90,
   },
   loadingContainer: {
     flex: 1,
@@ -200,10 +202,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.dangerBg,
     marginHorizontal: spacing.lg,
-    marginBottom: spacing.xs,
+    marginVertical: spacing.xs,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: borderRadius.md,
+    borderRadius: 8,
     gap: spacing.xs,
     borderWidth: 1,
     borderColor: colors.dangerBorder,
@@ -217,7 +219,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: spacing.lg,
-    bottom: spacing.xxl,
+    bottom: 20,
     width: 52,
     height: 52,
     borderRadius: 26,

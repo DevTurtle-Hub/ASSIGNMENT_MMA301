@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { colors, spacing, borderRadius, shadows } from '../theme';
 import { TaskStats } from '../types/task';
 
 interface HeaderProps {
   stats: TaskStats;
-  isLiveFirestore: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ stats, isLiveFirestore }) => {
+export const Header: React.FC<HeaderProps> = ({ stats }) => {
   return (
     <View style={styles.container}>
       {/* Top Navbar */}
@@ -23,32 +22,9 @@ export const Header: React.FC<HeaderProps> = ({ stats, isLiveFirestore }) => {
           </Text>
         </View>
 
-        {/* Top Right Badges / Links */}
-        <View style={styles.navPills}>
-          <View style={styles.homePill}>
-            <Text style={styles.homePillText}>Home</Text>
-          </View>
-          <View
-            style={[
-              styles.cloudPill,
-              isLiveFirestore ? styles.cloudPillLive : styles.cloudPillDemo,
-            ]}
-          >
-            <View
-              style={[
-                styles.cloudDot,
-                { backgroundColor: isLiveFirestore ? '#10B981' : '#F59E0B' },
-              ]}
-            />
-            <Text
-              style={[
-                styles.cloudPillText,
-                { color: isLiveFirestore ? '#047857' : '#B45309' },
-              ]}
-            >
-              {isLiveFirestore ? 'Firestore Live' : 'Demo Mode'}
-            </Text>
-          </View>
+        {/* Right side: Clean Home Pill */}
+        <View style={styles.homePill}>
+          <Text style={styles.homePillText}>Home</Text>
         </View>
       </View>
 
@@ -57,10 +33,10 @@ export const Header: React.FC<HeaderProps> = ({ stats, isLiveFirestore }) => {
         {/* Pill Tag */}
         <View style={styles.tagPill}>
           <View style={styles.tagDot} />
-          <Text style={styles.tagText}>Technical Foundation • Practical Exam 1</Text>
+          <Text style={styles.tagText}>Technical Foundation • Assignment 1</Text>
         </View>
 
-        {/* Big Heading: Task & Team Management with Blue-Cyan transition */}
+        {/* Big Heading: Task & Team Management */}
         <Text style={styles.heroHeadline}>
           Task & Team{' '}
           <Text style={styles.headlineBlue}>Manage</Text>
@@ -102,8 +78,8 @@ export const Header: React.FC<HeaderProps> = ({ stats, isLiveFirestore }) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: spacing.lg,
-    paddingTop: Platform.OS === 'ios' ? spacing.sm : spacing.md,
+    paddingHorizontal: spacing.md + 2,
+    paddingTop: spacing.xs,
     paddingBottom: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -112,16 +88,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm + 2,
   },
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.xs + 2,
   },
   logoBox: {
-    width: 34,
-    height: 34,
+    width: 32,
+    height: 32,
     borderRadius: borderRadius.sm + 2,
     borderWidth: 1.5,
     borderColor: '#93C5FD',
@@ -130,13 +106,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: '#2563EB',
     letterSpacing: -0.5,
   },
   brandTask: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: colors.textPrimary,
     letterSpacing: -0.3,
@@ -144,14 +120,9 @@ const styles = StyleSheet.create({
   brandFlow: {
     color: '#00C5FF',
   },
-  navPills: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
   homePill: {
     paddingHorizontal: 12,
-    paddingVertical: 5,
+    paddingVertical: 4,
     borderRadius: borderRadius.md,
     backgroundColor: '#EFF6FF',
   },
@@ -160,63 +131,37 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#2563EB',
   },
-  cloudPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    gap: 5,
-  },
-  cloudPillLive: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#A7F3D0',
-  },
-  cloudPillDemo: {
-    backgroundColor: '#FFFBEB',
-    borderColor: '#FDE68A',
-  },
-  cloudDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  cloudPillText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
   heroSection: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm + 2,
   },
   tagPill: {
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#EFF6FF',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
     borderRadius: borderRadius.full,
-    marginBottom: spacing.xs + 2,
-    gap: 6,
+    marginBottom: 4,
+    gap: 5,
   },
   tagDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
     backgroundColor: '#00C5FF',
   },
   tagText: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontWeight: '600',
     color: '#2563EB',
   },
   heroHeadline: {
-    fontSize: 24,
+    fontSize: 21,
     fontWeight: '900',
     color: colors.textPrimary,
     letterSpacing: -0.5,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   headlineBlue: {
     color: '#2563EB',
@@ -225,34 +170,34 @@ const styles = StyleSheet.create({
     color: '#00C5FF',
   },
   heroSubtitle: {
-    fontSize: 12,
+    fontSize: 11.5,
     color: colors.textSecondary,
-    lineHeight: 17,
+    lineHeight: 16,
   },
   statsContainer: {
     flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: 4,
+    gap: spacing.xs + 2,
+    marginTop: 2,
   },
   statCard: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.md,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: colors.border,
     ...shadows.sm,
   },
   statTitle: {
-    fontSize: 10,
+    fontSize: 9.5,
     fontWeight: '700',
     color: colors.textSecondary,
-    letterSpacing: 0.5,
-    marginBottom: 2,
+    letterSpacing: 0.4,
+    marginBottom: 1,
   },
   statCount: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '800',
   },
 });

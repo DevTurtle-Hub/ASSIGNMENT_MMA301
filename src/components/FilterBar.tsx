@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, borderRadius, typography } from '../theme';
+import { colors, spacing, borderRadius } from '../theme';
 import { TaskFilterStatus, TaskFilterPriority, TaskStats } from '../types/task';
 
 interface FilterBarProps {
@@ -30,15 +30,15 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onPriorityChange,
   stats,
 }) => {
-  const statusOptions: { label: string; value: TaskFilterStatus; count: number }[] = [
-    { label: 'All', value: 'all', count: stats.total },
-    { label: 'To Do', value: 'todo', count: stats.todo },
-    { label: 'In Progress', value: 'in_progress', count: stats.inProgress },
-    { label: 'Done', value: 'done', count: stats.done },
+  const statusOptions: { label: string; value: TaskFilterStatus }[] = [
+    { label: 'All', value: 'all' },
+    { label: 'Todo', value: 'todo' },
+    { label: 'In Progress', value: 'in_progress' },
+    { label: 'Done', value: 'done' },
   ];
 
   const priorityOptions: { label: string; value: TaskFilterPriority; color: string }[] = [
-    { label: 'All Priorities', value: 'all', color: colors.textSecondary },
+    { label: 'All', value: 'all', color: colors.textSecondary },
     { label: 'High', value: 'high', color: colors.priorityHigh },
     { label: 'Medium', value: 'medium', color: colors.priorityMedium },
     { label: 'Low', value: 'low', color: colors.priorityLow },
@@ -46,9 +46,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Search Input Bar */}
-      <View style={styles.searchBox}>
-        <Ionicons name="search" size={17} color={colors.primary} style={styles.searchIcon} />
+      {/* Search Input */}
+      <View style={styles.searchBar}>
+        <Ionicons name="search" size={15} color={colors.primary} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search tasks..."
@@ -61,59 +61,50 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         {Boolean(searchQuery) && (
           <TouchableOpacity
             onPress={() => onSearchChange('')}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
             style={styles.clearBtn}
           >
-            <Ionicons name="close-circle" size={17} color={colors.textMuted} />
+            <Ionicons name="close-circle" size={15} color={colors.textMuted} />
           </TouchableOpacity>
         )}
       </View>
 
-      {/* Status Segmented Tabs */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.statusRow}
-      >
-        {statusOptions.map((item) => {
-          const isSelected = statusFilter === item.value;
-          return (
-            <TouchableOpacity
-              key={item.value}
-              onPress={() => onStatusChange(item.value)}
-              style={[
-                styles.statusTab,
-                isSelected ? styles.statusTabActive : styles.statusTabInactive,
-              ]}
-              activeOpacity={0.7}
-            >
-              <Text
+      {/* Tasks Title + Status Filter Tabs (Matching Reference Image) */}
+      <View style={styles.tasksFilterRow}>
+        <View style={styles.tasksTitleGroup}>
+          <Text style={styles.tasksHeading}>Tasks</Text>
+          <View style={styles.tasksCountBadge}>
+            <Text style={styles.tasksCountText}>{stats.total}</Text>
+          </View>
+        </View>
+
+        {/* Filter Pills */}
+        <View style={styles.pillTabs}>
+          {statusOptions.map((item) => {
+            const isSelected = statusFilter === item.value;
+            return (
+              <TouchableOpacity
+                key={item.value}
+                onPress={() => onStatusChange(item.value)}
                 style={[
-                  styles.statusTabText,
-                  isSelected ? styles.statusTabTextActive : styles.statusTabTextInactive,
+                  styles.filterPill,
+                  isSelected && styles.filterPillActive,
                 ]}
-              >
-                {item.label}
-              </Text>
-              <View
-                style={[
-                  styles.badgeCount,
-                  isSelected ? styles.badgeCountActive : styles.badgeCountInactive,
-                ]}
+                activeOpacity={0.7}
               >
                 <Text
                   style={[
-                    styles.badgeText,
-                    isSelected ? styles.badgeTextActive : styles.badgeTextInactive,
+                    styles.filterPillText,
+                    isSelected && styles.filterPillTextActive,
                   ]}
                 >
-                  {item.count}
+                  {item.label}
                 </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
 
       {/* Priority Chips */}
       <ScrollView
@@ -121,6 +112,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.priorityRow}
       >
+        <Text style={styles.priorityPrefix}>Priority:</Text>
         {priorityOptions.map((item) => {
           const isSelected = priorityFilter === item.value;
           return (
@@ -129,7 +121,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               onPress={() => onPriorityChange(item.value)}
               style={[
                 styles.priorityChip,
-                isSelected ? styles.priorityChipActive : styles.priorityChipInactive,
+                isSelected && styles.priorityChipActive,
               ]}
               activeOpacity={0.7}
             >
@@ -139,7 +131,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               <Text
                 style={[
                   styles.priorityText,
-                  isSelected ? styles.priorityTextActive : styles.priorityTextInactive,
+                  isSelected && styles.priorityTextActive,
                 ]}
               >
                 {item.label}
@@ -154,126 +146,119 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+    paddingBottom: 4,
     backgroundColor: colors.background,
   },
-  searchBox: {
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    marginHorizontal: spacing.lg,
+    backgroundColor: '#FFFFFF',
     marginBottom: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: 10,
     borderRadius: borderRadius.md,
     borderWidth: 1,
     borderColor: colors.border,
-    height: 44,
+    height: 38,
   },
   searchIcon: {
-    marginRight: spacing.xs,
+    marginRight: 6,
   },
   searchInput: {
     flex: 1,
-    ...typography.body,
     color: colors.textPrimary,
+    fontSize: 13,
     paddingVertical: 0,
-    fontSize: 14,
   },
   clearBtn: {
-    padding: 4,
+    padding: 2,
   },
-  statusRow: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
-    paddingBottom: 6,
+  tasksFilterRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.xs + 2,
   },
-  statusTab: {
+  tasksTitleGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: spacing.md,
-    borderRadius: borderRadius.full,
-    borderWidth: 1,
     gap: 6,
   },
-  statusTabActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+  tasksHeading: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    letterSpacing: -0.3,
   },
-  statusTabInactive: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-  },
-  statusTabText: {
-    ...typography.caption,
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  statusTabTextActive: {
-    color: '#FFFFFF',
-  },
-  statusTabTextInactive: {
-    color: colors.textSecondary,
-  },
-  badgeCount: {
-    paddingHorizontal: 6,
+  tasksCountBadge: {
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 7,
     paddingVertical: 1,
     borderRadius: borderRadius.full,
   },
-  badgeCountActive: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-  },
-  badgeCountInactive: {
-    backgroundColor: colors.surfaceSubtle,
-  },
-  badgeText: {
+  tasksCountText: {
     fontSize: 11,
     fontWeight: '700',
+    color: '#4F46E5',
   },
-  badgeTextActive: {
-    color: '#FFFFFF',
+  pillTabs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F1F5F9',
+    borderRadius: borderRadius.full,
+    padding: 2,
   },
-  badgeTextInactive: {
+  filterPill: {
+    paddingVertical: 4,
+    paddingHorizontal: 9,
+    borderRadius: borderRadius.full,
+  },
+  filterPillActive: {
+    backgroundColor: '#4F46E5',
+  },
+  filterPillText: {
+    fontSize: 11,
+    fontWeight: '600',
     color: colors.textSecondary,
   },
+  filterPillTextActive: {
+    color: '#FFFFFF',
+  },
   priorityRow: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.xs,
-    paddingTop: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
     paddingBottom: 2,
+  },
+  priorityPrefix: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textMuted,
+    marginRight: 2,
   },
   priorityChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: spacing.sm + 2,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    gap: 5,
+    paddingVertical: 3,
+    paddingHorizontal: 7,
+    borderRadius: borderRadius.xs,
+    gap: 4,
   },
   priorityChipActive: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primary,
-  },
-  priorityChipInactive: {
-    backgroundColor: 'transparent',
-    borderColor: colors.border,
+    backgroundColor: '#EEF2FF',
   },
   priorityDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
   },
   priorityText: {
-    ...typography.small,
     fontSize: 11,
+    color: colors.textSecondary,
   },
   priorityTextActive: {
-    color: colors.primaryDark,
+    color: '#4F46E5',
     fontWeight: '700',
-  },
-  priorityTextInactive: {
-    color: colors.textSecondary,
-    fontWeight: '500',
   },
 });

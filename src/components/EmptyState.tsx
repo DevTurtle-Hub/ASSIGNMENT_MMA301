@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, borderRadius, typography } from '../theme';
+import { colors, spacing, borderRadius } from '../theme';
 
 interface EmptyStateProps {
   isFiltered: boolean;
@@ -16,22 +16,23 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <View style={styles.card}>
-      <View style={styles.iconCircle}>
+      {/* Soft Purple Rounded Square Icon */}
+      <View style={styles.iconBox}>
         <Ionicons
-          name={isFiltered ? 'search' : 'sparkles'}
-          size={32}
-          color={colors.primary}
+          name={isFiltered ? 'search-outline' : 'clipboard-outline'}
+          size={24}
+          color="#4F46E5"
         />
       </View>
 
       <Text style={styles.title}>
-        {isFiltered ? 'No matching tasks' : 'No tasks in this view'}
+        {isFiltered ? 'No matching tasks' : 'No tasks found'}
       </Text>
 
       <Text style={styles.description}>
         {isFiltered
           ? 'Try adjusting your search keywords or switching filters to see other tasks.'
-          : 'Create your first task to start organizing your workflow with Cloud Firestore!'}
+          : 'Get started by creating your first task using the form.'}
       </Text>
 
       <View style={styles.actions}>
@@ -41,7 +42,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             style={styles.btnSecondary}
             activeOpacity={0.7}
           >
-            <Ionicons name="refresh" size={15} color={colors.textSecondary} />
             <Text style={styles.btnSecondaryText}>Reset Filters</Text>
           </TouchableOpacity>
         ) : null}
@@ -51,8 +51,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           style={styles.btnPrimary}
           activeOpacity={0.85}
         >
-          <Ionicons name="add-circle" size={17} color="#FFFFFF" />
-          <Text style={styles.btnPrimaryText}>Add Task</Text>
+          <Text style={styles.btnPrimaryText}>Create Task</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -63,41 +62,39 @@ const styles = StyleSheet.create({
   card: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.xxl,
+    paddingVertical: spacing.xxxl,
     paddingHorizontal: spacing.xl,
     marginHorizontal: spacing.lg,
-    marginTop: spacing.lg,
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
+    marginTop: spacing.md,
+    backgroundColor: '#FFFFFF',
+    borderRadius: borderRadius.lg,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    borderStyle: 'dashed',
   },
-  iconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: colors.primaryLight,
+  iconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.md,
+    backgroundColor: '#EEF2FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.primaryBorder,
   },
   title: {
-    ...typography.h3,
     fontSize: 16,
+    fontWeight: '800',
     color: colors.textPrimary,
     marginBottom: 4,
     textAlign: 'center',
   },
   description: {
-    ...typography.body,
     fontSize: 13,
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.lg,
     lineHeight: 18,
-    maxWidth: 280,
+    maxWidth: 290,
   },
   actions: {
     flexDirection: 'row',
@@ -105,33 +102,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnSecondary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingVertical: 9,
-    paddingHorizontal: spacing.md,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.surfaceSubtle,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+    borderRadius: borderRadius.sm,
+    backgroundColor: '#F1F5F9',
   },
   btnSecondaryText: {
-    ...typography.bodyBold,
-    color: colors.textSecondary,
     fontSize: 12,
+    fontWeight: '600',
+    color: colors.textSecondary,
   },
   btnPrimary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: colors.primary,
-    paddingVertical: 9,
-    paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.md,
+    backgroundColor: '#4F46E5',
+    paddingVertical: 7,
+    paddingHorizontal: 16,
+    borderRadius: borderRadius.sm,
   },
   btnPrimaryText: {
-    ...typography.bodyBold,
-    color: '#FFFFFF',
     fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });

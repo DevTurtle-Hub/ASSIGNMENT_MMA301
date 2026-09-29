@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, borderRadius, typography, shadows } from '../theme';
+import { colors, spacing, borderRadius, shadows } from '../theme';
 import { TaskStats } from '../types/task';
 
 interface HeaderProps {
@@ -12,83 +11,87 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ stats, isLiveFirestore }) => {
   return (
     <View style={styles.container}>
-      {/* Top Banner Row */}
-      <View style={styles.topRow}>
-        <View style={styles.branding}>
-          <View style={styles.logoBadge}>
-            <Ionicons name="sparkles" size={18} color="#FFFFFF" />
+      {/* Top Navbar */}
+      <View style={styles.navBar}>
+        {/* Logo: TF Task Flow */}
+        <View style={styles.brandRow}>
+          <View style={styles.logoBox}>
+            <Text style={styles.logoText}>TF</Text>
           </View>
-          <View>
-            <View style={styles.brandTitleRow}>
-              <Text style={styles.brandName}>TaskFlow</Text>
-              <View style={styles.proPill}>
-                <Text style={styles.proPillText}>EXPO</Text>
-              </View>
-            </View>
-            <Text style={styles.brandSubtitle}>Cloud Task Workspace</Text>
-          </View>
+          <Text style={styles.brandTask}>
+            Task <Text style={styles.brandFlow}>Flow</Text>
+          </Text>
         </View>
 
-        {/* Real-time Connection Status Badge */}
-        <View
-          style={[
-            styles.statusBadge,
-            isLiveFirestore ? styles.statusBadgeLive : styles.statusBadgeDemo,
-          ]}
-        >
+        {/* Top Right Badges / Links */}
+        <View style={styles.navPills}>
+          <View style={styles.homePill}>
+            <Text style={styles.homePillText}>Home</Text>
+          </View>
           <View
             style={[
-              styles.statusDot,
-              { backgroundColor: isLiveFirestore ? '#10B981' : '#F59E0B' },
-            ]}
-          />
-          <Text
-            style={[
-              styles.statusBadgeText,
-              { color: isLiveFirestore ? '#047857' : '#B45309' },
+              styles.cloudPill,
+              isLiveFirestore ? styles.cloudPillLive : styles.cloudPillDemo,
             ]}
           >
-            {isLiveFirestore ? 'Live Cloud' : 'Local Demo'}
-          </Text>
+            <View
+              style={[
+                styles.cloudDot,
+                { backgroundColor: isLiveFirestore ? '#10B981' : '#F59E0B' },
+              ]}
+            />
+            <Text
+              style={[
+                styles.cloudPillText,
+                { color: isLiveFirestore ? '#047857' : '#B45309' },
+              ]}
+            >
+              {isLiveFirestore ? 'Firestore Live' : 'Demo Mode'}
+            </Text>
+          </View>
         </View>
       </View>
 
-      {/* Modern Dashboard Stats Grid */}
-      <View style={styles.statsGrid}>
-        {/* Total Tasks */}
-        <View style={[styles.statCard, styles.statCardTotal]}>
-          <View style={styles.statHeader}>
-            <Text style={styles.statLabel}>Total Tasks</Text>
-            <Ionicons name="layers-outline" size={14} color={colors.primary} />
-          </View>
-          <Text style={[styles.statNumber, { color: colors.primary }]}>{stats.total}</Text>
+      {/* Hero Banner Section */}
+      <View style={styles.heroSection}>
+        {/* Pill Tag */}
+        <View style={styles.tagPill}>
+          <View style={styles.tagDot} />
+          <Text style={styles.tagText}>Technical Foundation • Practical Exam 1</Text>
         </View>
 
-        {/* To Do */}
-        <View style={[styles.statCard, styles.statCardTodo]}>
-          <View style={styles.statHeader}>
-            <Text style={styles.statLabel}>To Do</Text>
-            <Ionicons name="time-outline" size={14} color={colors.statusTodoText} />
-          </View>
-          <Text style={[styles.statNumber, { color: colors.statusTodoText }]}>{stats.todo}</Text>
+        {/* Big Heading: Task & Team Management */}
+        <Text style={styles.heroHeadline}>
+          Task & Team{' '}
+          <Text style={styles.headlineHighlight}>Management</Text>
+        </Text>
+
+        {/* Subtitle */}
+        <Text style={styles.heroSubtitle}>
+          Orchestrate workflows with ease. Powered by Expo React Native, TypeScript, and Firebase Cloud Firestore.
+        </Text>
+      </View>
+
+      {/* 3 Stats Cards Row (Exactly matching reference UI) */}
+      <View style={styles.statsContainer}>
+        {/* TO DO Card */}
+        <View style={styles.statCard}>
+          <Text style={styles.statTitle}>TO DO</Text>
+          <Text style={[styles.statCount, { color: colors.statTodo }]}>{stats.todo}</Text>
         </View>
 
-        {/* In Progress */}
-        <View style={[styles.statCard, styles.statCardInProgress]}>
-          <View style={styles.statHeader}>
-            <Text style={styles.statLabel}>In Progress</Text>
-            <Ionicons name="flash-outline" size={14} color={colors.textPurple} />
-          </View>
-          <Text style={[styles.statNumber, { color: colors.textPurple }]}>{stats.inProgress}</Text>
+        {/* IN PROGRESS Card */}
+        <View style={styles.statCard}>
+          <Text style={styles.statTitle}>IN PROGRESS</Text>
+          <Text style={[styles.statCount, { color: colors.statInProgress }]}>
+            {stats.inProgress}
+          </Text>
         </View>
 
-        {/* Completed */}
-        <View style={[styles.statCard, styles.statCardDone]}>
-          <View style={styles.statHeader}>
-            <Text style={styles.statLabel}>Done</Text>
-            <Ionicons name="checkmark-done-outline" size={14} color={colors.statusDoneText} />
-          </View>
-          <Text style={[styles.statNumber, { color: colors.statusDoneText }]}>{stats.done}</Text>
+        {/* COMPLETED Card */}
+        <View style={styles.statCard}>
+          <Text style={styles.statTitle}>COMPLETED</Text>
+          <Text style={[styles.statCount, { color: colors.statCompleted }]}>{stats.done}</Text>
         </View>
       </View>
     </View>
@@ -97,140 +100,155 @@ export const Header: React.FC<HeaderProps> = ({ stats, isLiveFirestore }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: spacing.lg,
     paddingTop: Platform.OS === 'ios' ? spacing.sm : spacing.md,
     paddingBottom: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    ...shadows.sm,
   },
-  topRow: {
+  navBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.md,
   },
-  branding: {
+  brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
-  logoBadge: {
-    width: 42,
-    height: 42,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.primary,
+  logoBox: {
+    width: 34,
+    height: 34,
+    borderRadius: borderRadius.sm + 2,
+    borderWidth: 1.5,
+    borderColor: '#6366F1',
+    backgroundColor: '#F5F3FF',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
   },
-  brandTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  brandName: {
-    ...typography.h2,
-    fontSize: 20,
-    color: colors.textPrimary,
+  logoText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#4F46E5',
     letterSpacing: -0.5,
   },
-  proPill: {
-    backgroundColor: colors.secondaryLight,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    borderColor: colors.secondaryBorder,
+  brandTask: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    letterSpacing: -0.3,
   },
-  proPillText: {
-    ...typography.small,
-    fontSize: 10,
-    fontWeight: '700',
-    color: colors.secondaryDark,
+  brandFlow: {
+    color: '#06B6D4',
   },
-  brandSubtitle: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginTop: 1,
-  },
-  statusBadge: {
+  navPills: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.sm + 2,
+    gap: spacing.xs,
+  },
+  homePill: {
+    paddingHorizontal: 12,
     paddingVertical: 5,
-    borderRadius: borderRadius.full,
+    borderRadius: borderRadius.md,
+    backgroundColor: '#EEF2FF',
+  },
+  homePillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#4F46E5',
+  },
+  cloudPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: borderRadius.md,
     borderWidth: 1,
     gap: 5,
   },
-  statusBadgeLive: {
+  cloudPillLive: {
     backgroundColor: '#ECFDF5',
     borderColor: '#A7F3D0',
   },
-  statusBadgeDemo: {
-    backgroundColor: colors.accentAmberLight,
-    borderColor: colors.accentAmberBorder,
+  cloudPillDemo: {
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FDE68A',
   },
-  statusDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+  cloudDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
-  statusBadgeText: {
-    ...typography.small,
-    fontWeight: '700',
+  cloudPillText: {
     fontSize: 11,
+    fontWeight: '700',
   },
-  statsGrid: {
+  heroSection: {
+    marginBottom: spacing.md,
+  },
+  tagPill: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: borderRadius.full,
+    marginBottom: spacing.xs + 2,
+    gap: 6,
+  },
+  tagDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#06B6D4',
+  },
+  tagText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#4F46E5',
+  },
+  heroHeadline: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: colors.textPrimary,
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  headlineHighlight: {
+    color: '#4F46E5',
+  },
+  heroSubtitle: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    lineHeight: 17,
+  },
+  statsContainer: {
     flexDirection: 'row',
     gap: spacing.sm,
+    marginTop: 4,
   },
   statCard: {
     flex: 1,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.md,
-    backgroundColor: colors.surfaceSubtle,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
+    ...shadows.sm,
   },
-  statHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  statTitle: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.textSecondary,
+    letterSpacing: 0.5,
     marginBottom: 2,
   },
-  statCardTotal: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primaryBorder,
-  },
-  statCardTodo: {
-    backgroundColor: colors.statusTodoBg,
-    borderColor: colors.statusTodoBorder,
-  },
-  statCardInProgress: {
-    backgroundColor: colors.statusInProgressBg,
-    borderColor: colors.statusInProgressBorder,
-  },
-  statCardDone: {
-    backgroundColor: colors.statusDoneBg,
-    borderColor: colors.statusDoneBorder,
-  },
-  statNumber: {
-    fontSize: 20,
+  statCount: {
+    fontSize: 22,
     fontWeight: '800',
-    letterSpacing: -0.5,
-  },
-  statLabel: {
-    ...typography.small,
-    fontSize: 10,
-    color: colors.textSecondary,
-    fontWeight: '600',
-    textTransform: 'uppercase',
   },
 });

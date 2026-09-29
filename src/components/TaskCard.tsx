@@ -25,14 +25,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     switch (priority) {
       case 'high':
         return {
-          label: 'High',
+          label: 'HIGH',
           color: colors.priorityHigh,
           bg: colors.priorityHighBg,
           borderColor: colors.priorityHighBorder,
         };
       case 'medium':
         return {
-          label: 'Medium',
+          label: 'MEDIUM',
           color: colors.priorityMedium,
           bg: colors.priorityMediumBg,
           borderColor: colors.priorityMediumBorder,
@@ -40,7 +40,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       case 'low':
       default:
         return {
-          label: 'Low',
+          label: 'LOW',
           color: colors.priorityLow,
           bg: colors.priorityLowBg,
           borderColor: colors.priorityLowBorder,
@@ -61,9 +61,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       case 'in_progress':
         return {
           label: 'In Prog',
-          color: colors.primaryDark,
-          bg: colors.primarySoft,
-          borderColor: colors.primaryBorder,
+          color: colors.statusInProgressText,
+          bg: colors.statusInProgressBg,
+          borderColor: colors.statusInProgressBorder,
           icon: 'time' as const,
         };
       case 'todo':
@@ -157,7 +157,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               activeOpacity={0.7}
             >
-              <Ionicons name="create-outline" size={15} color={colors.primaryDark} />
+              <Ionicons name="create-outline" size={15} color="#2563EB" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -177,7 +177,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.md,
     marginHorizontal: spacing.lg,
     marginBottom: spacing.sm + 2,
@@ -280,11 +280,11 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: borderRadius.sm,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: '#EFF6FF',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.primaryBorder,
+    borderColor: '#BFDBFE',
   },
   miniBtnDelete: {
     backgroundColor: colors.dangerBg,

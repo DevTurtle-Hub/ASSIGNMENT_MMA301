@@ -16,12 +16,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <View style={styles.card}>
-      {/* Soft Purple Rounded Square Icon */}
+      {/* Soft Blue Rounded Square Icon */}
       <View style={styles.iconBox}>
         <Ionicons
           name={isFiltered ? 'search-outline' : 'clipboard-outline'}
           size={24}
-          color="#4F46E5"
+          color="#2563EB"
         />
       </View>
 
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: borderRadius.md,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#EFF6FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   btnPrimary: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#2563EB',
     paddingVertical: 7,
     paddingHorizontal: 16,
     borderRadius: borderRadius.sm,

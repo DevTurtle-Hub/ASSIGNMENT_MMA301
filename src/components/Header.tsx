@@ -60,10 +60,11 @@ export const Header: React.FC<HeaderProps> = ({ stats, isLiveFirestore }) => {
           <Text style={styles.tagText}>Technical Foundation • Practical Exam 1</Text>
         </View>
 
-        {/* Big Heading: Task & Team Management */}
+        {/* Big Heading: Task & Team Management with Blue-Cyan transition */}
         <Text style={styles.heroHeadline}>
           Task & Team{' '}
-          <Text style={styles.headlineHighlight}>Management</Text>
+          <Text style={styles.headlineBlue}>Manage</Text>
+          <Text style={styles.headlineCyan}>ment</Text>
         </Text>
 
         {/* Subtitle */}
@@ -123,15 +124,15 @@ const styles = StyleSheet.create({
     height: 34,
     borderRadius: borderRadius.sm + 2,
     borderWidth: 1.5,
-    borderColor: '#6366F1',
-    backgroundColor: '#F5F3FF',
+    borderColor: '#93C5FD',
+    backgroundColor: '#EFF6FF',
     justifyContent: 'center',
     alignItems: 'center',
   },
   logoText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#4F46E5',
+    color: '#2563EB',
     letterSpacing: -0.5,
   },
   brandTask: {
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   brandFlow: {
-    color: '#06B6D4',
+    color: '#00C5FF',
   },
   navPills: {
     flexDirection: 'row',
@@ -152,12 +153,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: borderRadius.md,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#EFF6FF',
   },
   homePillText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#4F46E5',
+    color: '#2563EB',
   },
   cloudPill: {
     flexDirection: 'row',
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
@@ -203,12 +204,12 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#06B6D4',
+    backgroundColor: '#00C5FF',
   },
   tagText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#4F46E5',
+    color: '#2563EB',
   },
   heroHeadline: {
     fontSize: 24,
@@ -217,8 +218,11 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     marginBottom: 4,
   },
-  headlineHighlight: {
-    color: '#4F46E5',
+  headlineBlue: {
+    color: '#2563EB',
+  },
+  headlineCyan: {
+    color: '#00C5FF',
   },
   heroSubtitle: {
     fontSize: 12,

@@ -1,53 +1,54 @@
 export const colors = {
-  // Primary Dual-Tone: Purple to Cyan (Matching Reference UI)
-  primary: '#4F46E5', // Electric Indigo / Purple
-  primaryDark: '#4338CA',
-  primaryDeep: '#3730A3',
-  primaryLight: '#EEF2FF', // Soft Indigo Lavender Tint
-  primarySoft: '#E0E7FF',
-  primaryBorder: '#C7D2FE',
+  // Primary: Royal Blue & Electric Cyan (Exact match from reference image)
+  primary: '#2563EB', // Vibrant Royal Blue (Primary Brand)
+  primaryDark: '#1D4ED8',
+  primaryDeep: '#1E40AF',
+  primaryLight: '#EFF6FF', // Soft Sky/Blue 50
+  primarySoft: '#DBEAFE', // Soft Blue 100
+  primaryBorder: '#BFDBFE', // Soft Blue 200
 
-  // Vibrant Cyan / Electric Blue (Complementary Accent)
-  cyan: '#06B6D4',
+  // Vibrant Electric Cyan
+  cyan: '#00C5FF', // Bright Cyan
+  cyanAlt: '#06B6D4',
   cyanLight: '#E0F2FE',
   cyanBorder: '#BAE6FD',
   cyanDark: '#0284C7',
 
   // Secondary aliases
-  secondary: '#06B6D4',
+  secondary: '#00C5FF',
   secondaryLight: '#E0F2FE',
   secondaryBorder: '#BAE6FD',
   secondaryDark: '#0284C7',
 
+  // Gradient stops
+  gradientStart: '#2563EB',
+  gradientEnd: '#00C5FF',
+
   // Amber Accent
-  accentAmber: '#D97706',
-  accentAmberLight: '#FFFBEB',
-  accentAmberBorder: '#FEF3C7',
+  accentAmber: '#EA580C',
+  accentAmberLight: '#FFF7ED',
+  accentAmberBorder: '#FFEDD5',
 
-  // Gradient definitions (For accents, borders, and buttons)
-  gradientStart: '#4F46E5', // Indigo Purple
-  gradientEnd: '#06B6D4', // Electric Cyan
-
-  // Surface & Backgrounds
-  background: '#F8FAFC', // Slate 50 / Crisp background
+  // Canvas & Surfaces
+  background: '#F8FAFC',
   backgroundSubtle: '#F1F5F9',
-  surface: '#FFFFFF', // Pure White Cards
+  surface: '#FFFFFF',
   surfaceSubtle: '#F8FAFC',
 
-  // Text Hierarchy
-  textPrimary: '#0F172A', // Slate 900 / Deep Black-Navy
+  // Text Colors
+  textPrimary: '#0F172A', // Slate 900 / Pure Black
   textSecondary: '#64748B', // Slate 500
   textMuted: '#94A3B8', // Slate 400
   textLight: '#FFFFFF',
-  textPurple: '#4F46E5',
-  textCyan: '#0284C7',
+  textBlue: '#2563EB',
+  textCyan: '#00C5FF',
 
-  // Stat Counter Colors (Exact matches from reference)
+  // Stat Counter Colors (Exact matches from reference image)
   statTodo: '#EA580C', // Orange
   statTodoBg: '#FFF7ED',
   statTodoBorder: '#FFEDD5',
 
-  statInProgress: '#0284C7', // Cyan Blue
+  statInProgress: '#00C5FF', // Bright Cyan Blue
   statInProgressBg: '#F0F9FF',
   statInProgressBorder: '#E0F2FE',
 
@@ -62,7 +63,7 @@ export const colors = {
 
   statusInProgressText: '#0284C7',
   statusInProgressBg: '#F0F9FF',
-  statusInProgressBorder: '#E0F2FE',
+  statusInProgressBorder: '#BAE6FD',
 
   statusDoneText: '#16A34A',
   statusDoneBg: '#F0FDF4',
@@ -81,10 +82,10 @@ export const colors = {
   priorityHighBg: '#FFF1F2',
   priorityHighBorder: '#FFE4E6',
 
-  // Borders & Dividers
-  border: '#E2E8F0', // Slate 200
+  // Borders
+  border: '#E2E8F0',
   borderSubtle: '#F1F5F9',
-  borderFocus: '#4F46E5',
+  borderFocus: '#2563EB',
 
   // Actions
   danger: '#EF4444',

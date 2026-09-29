@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   tasksCountBadge: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 7,
     paddingVertical: 1,
     borderRadius: borderRadius.full,
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   tasksCountText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#4F46E5',
+    color: '#2563EB',
   },
   pillTabs: {
     flexDirection: 'row',
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
   },
   filterPillActive: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#2563EB',
   },
   filterPillText: {
     fontSize: 11,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   priorityChipActive: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#EFF6FF',
   },
   priorityDot: {
     width: 5,
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   priorityTextActive: {
-    color: '#4F46E5',
+    color: '#2563EB',
     fontWeight: '700',
   },
 });

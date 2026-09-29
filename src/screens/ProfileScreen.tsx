@@ -8,7 +8,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, borderRadius, typography, shadows } from '../theme';
+import { colors, spacing, borderRadius, shadows } from '../theme';
 import { isFirebaseConfigured } from '../services/firebase';
 
 export const ProfileScreen: React.FC = () => {
@@ -19,13 +19,13 @@ export const ProfileScreen: React.FC = () => {
     { label: 'Exam', value: 'Practical Exam 1' },
     { label: 'Framework', value: 'React Native (Expo SDK 57)' },
     { label: 'Language', value: 'TypeScript' },
-    { label: 'Database', value: isFirestoreLive ? 'Cloud Firestore (Live)' : 'Demo Memory Mode' },
+    { label: 'Database', value: isFirestoreLive ? 'Cloud Firestore (Live)' : 'Demo Mode' },
     { label: 'Auth Status', value: 'Public (No Auth required)' },
   ];
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
@@ -33,7 +33,7 @@ export const ProfileScreen: React.FC = () => {
         {/* Profile Card Header */}
         <View style={styles.profileCard}>
           <View style={styles.avatarCircle}>
-            <Ionicons name="person" size={38} color="#FFFFFF" />
+            <Ionicons name="person" size={36} color="#FFFFFF" />
           </View>
           <Text style={styles.userName}>Student Developer</Text>
           <Text style={styles.userRole}>Mobile Multi-Platform • MMA301</Text>
@@ -67,7 +67,7 @@ export const ProfileScreen: React.FC = () => {
 
         {/* Exam 2 Notice */}
         <View style={styles.noticeCard}>
-          <Ionicons name="shield-checkmark-outline" size={20} color={colors.primary} />
+          <Ionicons name="shield-checkmark-outline" size={20} color="#2563EB" />
           <View style={styles.noticeContent}>
             <Text style={styles.noticeTitle}>Authentication in Practical Exam 2</Text>
             <Text style={styles.noticeText}>
@@ -84,15 +84,16 @@ export const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#FFFFFF',
   },
   container: {
     padding: spacing.lg,
     paddingBottom: 80,
+    backgroundColor: colors.background,
   },
   profileCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
+    backgroundColor: '#FFFFFF',
+    borderRadius: borderRadius.lg,
     padding: spacing.xl,
     alignItems: 'center',
     marginBottom: spacing.lg,
@@ -101,27 +102,27 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   avatarCircle: {
-    width: 74,
-    height: 74,
-    borderRadius: 37,
-    backgroundColor: colors.primary,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#2563EB',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
-    shadowColor: colors.primary,
+    shadowColor: '#2563EB',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 4,
   },
   userName: {
-    ...typography.h2,
     fontSize: 18,
+    fontWeight: '800',
     color: colors.textPrimary,
     marginBottom: 2,
   },
   userRole: {
-    ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
     marginBottom: spacing.md,
   },
@@ -130,35 +131,34 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   badge: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: spacing.md,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
     borderWidth: 1,
-    borderColor: colors.primaryBorder,
+    borderColor: '#BFDBFE',
   },
   badgeText: {
-    ...typography.small,
-    color: colors.primaryDark,
+    color: '#2563EB',
     fontWeight: '700',
     fontSize: 11,
   },
   badgeFirebase: {
-    backgroundColor: colors.secondaryLight,
-    borderColor: colors.secondaryBorder,
+    backgroundColor: '#E0F2FE',
+    borderColor: '#BAE6FD',
   },
   badgeFirebaseText: {
-    color: colors.secondaryDark,
+    color: '#0284C7',
   },
   sectionHeader: {
-    ...typography.h3,
     fontSize: 15,
+    fontWeight: '800',
     color: colors.textPrimary,
     marginBottom: spacing.sm,
   },
   detailsCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    backgroundColor: '#FFFFFF',
+    borderRadius: borderRadius.md,
     borderWidth: 1,
     borderColor: colors.border,
     overflow: 'hidden',
@@ -177,35 +177,35 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.surfaceSubtle,
   },
   detailLabel: {
-    ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
     fontWeight: '600',
   },
   detailValue: {
-    ...typography.bodyBold,
-    color: colors.textPrimary,
     fontSize: 12,
+    fontWeight: '700',
+    color: colors.textPrimary,
   },
   noticeCard: {
     flexDirection: 'row',
-    backgroundColor: colors.primaryLight,
-    borderRadius: borderRadius.lg,
+    backgroundColor: '#EFF6FF',
+    borderRadius: borderRadius.md,
     padding: spacing.md,
     gap: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.primaryBorder,
+    borderColor: '#BFDBFE',
   },
   noticeContent: {
     flex: 1,
   },
   noticeTitle: {
-    ...typography.bodyBold,
-    color: colors.primaryDark,
     fontSize: 13,
+    fontWeight: '700',
+    color: '#2563EB',
     marginBottom: 2,
   },
   noticeText: {
-    ...typography.caption,
+    fontSize: 11,
     color: colors.textSecondary,
     lineHeight: 16,
   },

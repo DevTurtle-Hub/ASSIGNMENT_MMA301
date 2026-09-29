@@ -76,7 +76,7 @@ export const HomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <View style={styles.container}>
         {/* App Header & Live Stats */}
         <Header stats={stats} isLiveFirestore={isLiveFirestore} />
@@ -103,7 +103,7 @@ export const HomeScreen: React.FC = () => {
         {/* Task List */}
         {loading && !refreshing ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.primary} />
+            <ActivityIndicator size="large" color="#2563EB" />
             <Text style={styles.loadingText}>Syncing tasks with Cloud Firestore...</Text>
           </View>
         ) : (
@@ -124,8 +124,8 @@ export const HomeScreen: React.FC = () => {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={refreshTasks}
-                colors={[colors.primary]}
-                tintColor={colors.primary}
+                colors={['#2563EB']}
+                tintColor="#2563EB"
               />
             }
             ListEmptyComponent={
@@ -138,13 +138,13 @@ export const HomeScreen: React.FC = () => {
           />
         )}
 
-        {/* Floating Action Button (FAB) */}
+        {/* Floating Action Button (FAB) in Royal Blue */}
         <TouchableOpacity
           style={styles.fab}
           onPress={openCreateModal}
           activeOpacity={0.85}
         >
-          <Ionicons name="add" size={28} color="#FFFFFF" />
+          <Ionicons name="add" size={26} color="#FFFFFF" />
         </TouchableOpacity>
 
         {/* Create / Edit Modal */}
@@ -174,7 +174,7 @@ export const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
   },
   container: {
     flex: 1,
@@ -216,18 +216,18 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: spacing.xl,
+    right: spacing.lg,
     bottom: spacing.xxl,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primary,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#2563EB',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 6 },
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.35,
-    shadowRadius: 10,
+    shadowRadius: 8,
     elevation: 6,
   },
 });

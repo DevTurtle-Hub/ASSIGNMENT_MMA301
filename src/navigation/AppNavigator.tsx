@@ -21,7 +21,7 @@ export const AppNavigator: React.FC = () => {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: '#2563EB',
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
@@ -75,7 +75,7 @@ export const AppNavigator: React.FC = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: colors.border,
     height: Platform.OS === 'ios' ? 84 : 64,

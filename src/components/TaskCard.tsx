@@ -21,13 +21,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const isTaskOverdue = isOverdue(task.dueDate) && task.status !== 'done';
   const isDone = task.status === 'done';
 
-  // Harmonious priority styling
+  // Harmonious priority styling with left accent strip color
   const getPriorityConfig = (priority: TaskPriority) => {
     switch (priority) {
       case 'high':
         return {
           label: 'HIGH',
           color: '#E11D48',
+          stripeColor: '#F43F5E',
           bg: '#FFF1F2',
           border: '#FFE4E6',
         };
@@ -35,6 +36,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         return {
           label: 'MEDIUM',
           color: '#D97706',
+          stripeColor: '#F59E0B',
           bg: '#FFFBEB',
           border: '#FEF3C7',
         };
@@ -43,6 +45,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         return {
           label: 'LOW',
           color: '#0284C7',
+          stripeColor: '#00C5FF',
           bg: '#F0F9FF',
           border: '#E0F2FE',
         };
@@ -83,89 +86,97 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const priorityConfig = getPriorityConfig(task.priority);
   const statusConfig = getStatusConfig(task.status);
 
+  // Left strip color: Green if done, otherwise priority blended color
+  const stripeColor = isDone ? '#10B981' : priorityConfig.stripeColor;
+
   return (
     <View style={[styles.card, isDone && styles.cardDone]}>
-      {/* Top Header Row: Priority + Status Pill */}
-      <View style={styles.topRow}>
-        {/* Harmonious Priority Pill */}
-        <View
-          style={[
-            styles.priorityPill,
-            {
-              backgroundColor: priorityConfig.bg,
-              borderColor: priorityConfig.border,
-            },
-          ]}
-        >
-          <Text style={[styles.priorityPillText, { color: priorityConfig.color }]}>
-            {priorityConfig.label}
-          </Text>
+      {/* Harmonious Left Color Accent Stripe */}
+      <View style={[styles.accentStripe, { backgroundColor: stripeColor }]} />
+
+      <View style={styles.cardContent}>
+        {/* Top Header Row: Priority + Status Pill */}
+        <View style={styles.topRow}>
+          {/* Priority Pill */}
+          <View
+            style={[
+              styles.priorityPill,
+              {
+                backgroundColor: priorityConfig.bg,
+                borderColor: priorityConfig.border,
+              },
+            ]}
+          >
+            <Text style={[styles.priorityPillText, { color: priorityConfig.color }]}>
+              {priorityConfig.label}
+            </Text>
+          </View>
+
+          {/* Interactive Status Pill */}
+          <TouchableOpacity
+            onPress={() => onToggleStatus(task)}
+            style={[
+              styles.statusPill,
+              {
+                backgroundColor: statusConfig.bg,
+                borderColor: statusConfig.border,
+              },
+            ]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name={statusConfig.icon} size={12} color={statusConfig.color} />
+            <Text style={[styles.statusPillText, { color: statusConfig.color }]}>
+              {statusConfig.label}
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Interactive Status Pill */}
-        <TouchableOpacity
-          onPress={() => onToggleStatus(task)}
-          style={[
-            styles.statusPill,
-            {
-              backgroundColor: statusConfig.bg,
-              borderColor: statusConfig.border,
-            },
-          ]}
-          activeOpacity={0.7}
-        >
-          <Ionicons name={statusConfig.icon} size={12} color={statusConfig.color} />
-          <Text style={[styles.statusPillText, { color: statusConfig.color }]}>
-            {statusConfig.label}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Task Title */}
-      <Text style={[styles.title, isDone && styles.titleDone]} numberOfLines={2}>
-        {task.title}
-      </Text>
-
-      {/* Task Description */}
-      {Boolean(task.description) && (
-        <Text style={[styles.description, isDone && styles.descriptionDone]} numberOfLines={2}>
-          {task.description}
+        {/* Task Title */}
+        <Text style={[styles.title, isDone && styles.titleDone]} numberOfLines={2}>
+          {task.title}
         </Text>
-      )}
 
-      {/* Bottom Meta Row */}
-      <View style={styles.bottomRow}>
-        {/* Due Date */}
-        <View style={styles.dueDateBadge}>
-          <Ionicons
-            name={isTaskOverdue ? 'warning' : 'calendar-outline'}
-            size={12}
-            color={isTaskOverdue ? colors.danger : colors.textMuted}
-          />
-          <Text style={[styles.dueDateText, isTaskOverdue && styles.dueDateOverdue]}>
-            {isTaskOverdue ? `Overdue: ${formatDate(task.dueDate)}` : formatDate(task.dueDate)}
+        {/* Task Description */}
+        {Boolean(task.description) && (
+          <Text style={[styles.description, isDone && styles.descriptionDone]} numberOfLines={2}>
+            {task.description}
           </Text>
-        </View>
+        )}
 
-        {/* Unified Action Buttons */}
-        <View style={styles.actions}>
-          <TouchableOpacity
-            onPress={() => onEdit(task)}
-            style={styles.miniBtn}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="create-outline" size={15} color="#2563EB" />
-          </TouchableOpacity>
+        {/* Bottom Meta Row */}
+        <View style={styles.bottomRow}>
+          {/* Due Date */}
+          <View style={styles.dueDateBadge}>
+            <Ionicons
+              name={isTaskOverdue ? 'warning' : 'calendar-outline'}
+              size={12}
+              color={isTaskOverdue ? colors.danger : colors.textMuted}
+            />
+            <Text style={[styles.dueDateText, isTaskOverdue && styles.dueDateOverdue]}>
+              {isTaskOverdue ? `Overdue: ${formatDate(task.dueDate)}` : formatDate(task.dueDate)}
+            </Text>
+          </View>
 
-          <TouchableOpacity
-            onPress={() => onDelete(task)}
-            style={[styles.miniBtn, styles.miniBtnDelete]}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="trash-outline" size={15} color="#EF4444" />
-          </TouchableOpacity>
+          {/* Action Buttons */}
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={() => onEdit(task)}
+              style={styles.miniBtn}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="create-outline" size={15} color="#2563EB" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => onDelete(task)}
+              style={[styles.miniBtn, styles.miniBtnDelete]}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="trash-outline" size={15} color="#EF4444" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -178,15 +189,23 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     marginHorizontal: spacing.md + 2,
     marginBottom: spacing.sm + 2,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    flexDirection: 'row',
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.border,
     ...shadows.sm,
   },
   cardDone: {
     backgroundColor: '#F8FAFC',
-    opacity: 0.82,
+    opacity: 0.85,
+  },
+  accentStripe: {
+    width: 4,
+  },
+  cardContent: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   topRow: {
     flexDirection: 'row',

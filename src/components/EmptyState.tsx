@@ -15,44 +15,44 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onCreateTask,
 }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.card}>
       <View style={styles.iconCircle}>
         <Ionicons
-          name={isFiltered ? 'search-outline' : 'sparkles-outline'}
-          size={36}
+          name={isFiltered ? 'search' : 'sparkles'}
+          size={32}
           color={colors.primary}
         />
       </View>
 
       <Text style={styles.title}>
-        {isFiltered ? 'No Matching Tasks Found' : 'No Tasks Yet'}
+        {isFiltered ? 'No matching tasks' : 'No tasks in this view'}
       </Text>
 
       <Text style={styles.description}>
         {isFiltered
-          ? 'Try adjusting your search query or filter settings to find what you are looking for.'
-          : 'Get started by creating your first task. It will automatically sync with Firebase Firestore!'}
+          ? 'Try adjusting your search keywords or switching filters to see other tasks.'
+          : 'Create your first task to start organizing your workflow with Cloud Firestore!'}
       </Text>
 
-      <View style={styles.buttonRow}>
+      <View style={styles.actions}>
         {isFiltered && onClearFilter ? (
           <TouchableOpacity
             onPress={onClearFilter}
-            style={styles.secondaryButton}
+            style={styles.btnSecondary}
             activeOpacity={0.7}
           >
-            <Ionicons name="refresh-outline" size={16} color={colors.textSecondary} />
-            <Text style={styles.secondaryButtonText}>Reset Filters</Text>
+            <Ionicons name="refresh" size={15} color={colors.textSecondary} />
+            <Text style={styles.btnSecondaryText}>Reset Filters</Text>
           </TouchableOpacity>
         ) : null}
 
         <TouchableOpacity
           onPress={onCreateTask}
-          style={styles.primaryButton}
-          activeOpacity={0.8}
+          style={styles.btnPrimary}
+          activeOpacity={0.85}
         >
-          <Ionicons name="add-circle-outline" size={18} color={colors.surface} />
-          <Text style={styles.primaryButtonText}>Create Task</Text>
+          <Ionicons name="add-circle" size={17} color="#FFFFFF" />
+          <Text style={styles.btnPrimaryText}>Add Task</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -60,75 +60,78 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
+  card: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.xxxl,
-    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.xl,
     marginHorizontal: spacing.lg,
-    marginTop: spacing.xl,
+    marginTop: spacing.lg,
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
     borderWidth: 1,
     borderColor: colors.border,
-    borderStyle: 'dashed',
   },
   iconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
   },
   title: {
-    ...typography.h2,
-    fontSize: 18,
+    ...typography.h3,
+    fontSize: 16,
     color: colors.textPrimary,
-    marginBottom: spacing.xs,
+    marginBottom: 4,
     textAlign: 'center',
   },
   description: {
     ...typography.body,
+    fontSize: 13,
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.lg,
-    lineHeight: 20,
+    lineHeight: 18,
+    maxWidth: 280,
   },
-  buttonRow: {
+  actions: {
     flexDirection: 'row',
     gap: spacing.sm,
     alignItems: 'center',
   },
-  secondaryButton: {
+  btnSecondary: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 10,
+    gap: 5,
+    paddingVertical: 9,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.md,
     backgroundColor: colors.surfaceSubtle,
     borderWidth: 1,
     borderColor: colors.border,
   },
-  secondaryButtonText: {
+  btnSecondaryText: {
     ...typography.bodyBold,
     color: colors.textSecondary,
-    fontSize: 13,
+    fontSize: 12,
   },
-  primaryButton: {
+  btnPrimary: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
     backgroundColor: colors.primary,
-    paddingVertical: 10,
+    paddingVertical: 9,
     paddingHorizontal: spacing.lg,
     borderRadius: borderRadius.md,
   },
-  primaryButtonText: {
+  btnPrimaryText: {
     ...typography.bodyBold,
-    color: colors.surface,
-    fontSize: 13,
+    color: '#FFFFFF',
+    fontSize: 12,
   },
 });

@@ -33,18 +33,17 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 }) => {
   const isEditing = Boolean(taskToEdit);
 
-  // Form states
+  // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<TaskStatus>('todo');
   const [priority, setPriority] = useState<TaskPriority>('medium');
   const [dueDate, setDueDate] = useState(getTodayString());
 
-  // Validation & Loading states
+  // Error & loading
   const [titleError, setTitleError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Reset or populate fields when modal opens/changes
   useEffect(() => {
     if (visible) {
       if (taskToEdit) {
@@ -87,9 +86,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           priority,
           dueDate,
         });
-        if (success) {
-          onClose();
-        }
+        if (success) onClose();
       } else {
         const success = await onSubmitCreate({
           title: title.trim(),
@@ -98,25 +95,23 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           priority,
           dueDate,
         });
-        if (success) {
-          onClose();
-        }
+        if (success) onClose();
       }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const statusList: { label: string; value: TaskStatus }[] = [
-    { label: 'To Do', value: 'todo' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'Completed', value: 'done' },
+  const statusList: { label: string; value: TaskStatus; icon: any }[] = [
+    { label: 'To Do', value: 'todo', icon: 'ellipse-outline' },
+    { label: 'In Progress', value: 'in_progress', icon: 'time-outline' },
+    { label: 'Done', value: 'done', icon: 'checkmark-circle-outline' },
   ];
 
-  const priorityList: { label: string; value: TaskPriority; color: string }[] = [
-    { label: 'Low', value: 'low', color: colors.priorityLow },
-    { label: 'Medium', value: 'medium', color: colors.priorityMedium },
-    { label: 'High', value: 'high', color: colors.priorityHigh },
+  const priorityList: { label: string; value: TaskPriority; color: string; bg: string }[] = [
+    { label: 'Low', value: 'low', color: colors.priorityLow, bg: colors.priorityLowBg },
+    { label: 'Medium', value: 'medium', color: colors.priorityMedium, bg: colors.priorityMediumBg },
+    { label: 'High', value: 'high', color: colors.priorityHigh, bg: colors.priorityHighBg },
   ];
 
   const quickDates = [
@@ -127,55 +122,54 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   ];
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.overlay}
       >
-        <View style={styles.modalCard}>
-          {/* Modal Header */}
-          <View style={styles.header}>
+        <View style={styles.modalSheet}>
+          {/* Header */}
+          <View style={styles.modalHeader}>
             <View style={styles.headerTitleRow}>
-              <Ionicons
-                name={isEditing ? 'create-outline' : 'add-circle-outline'}
-                size={22}
-                color={colors.primary}
-              />
-              <Text style={styles.headerTitle}>
-                {isEditing ? 'Edit Task' : 'Create New Task'}
-              </Text>
+              <View style={styles.headerIconBox}>
+                <Ionicons
+                  name={isEditing ? 'create' : 'add'}
+                  size={20}
+                  color="#FFFFFF"
+                />
+              </View>
+              <View>
+                <Text style={styles.modalTitle}>
+                  {isEditing ? 'Edit Task' : 'New Task'}
+                </Text>
+                <Text style={styles.modalSubtitle}>
+                  {isEditing ? 'Update task details and progress' : 'Fill in task details below'}
+                </Text>
+              </View>
             </View>
 
             <TouchableOpacity
               onPress={onClose}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={styles.closeButton}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={styles.btnDismiss}
             >
-              <Ionicons name="close" size={22} color={colors.textSecondary} />
+              <Ionicons name="close" size={20} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={styles.scrollArea}
           >
-            {/* Title Field (Required) */}
-            <View style={styles.formGroup}>
-              <View style={styles.labelRow}>
-                <Text style={styles.label}>Task Title</Text>
-                <Text style={styles.requiredAsterisk}>*</Text>
+            {/* Title */}
+            <View style={styles.field}>
+              <View style={styles.fieldLabelRow}>
+                <Text style={styles.fieldLabel}>Task Title</Text>
+                <Text style={styles.requiredStar}>*</Text>
               </View>
               <TextInput
-                style={[
-                  styles.input,
-                  Boolean(titleError) && styles.inputError,
-                ]}
-                placeholder="e.g. Implement user authentication"
+                style={[styles.input, Boolean(titleError) && styles.inputError]}
+                placeholder="e.g. Design app homepage mockups"
                 placeholderTextColor={colors.textMuted}
                 value={title}
                 onChangeText={(text) => {
@@ -185,19 +179,19 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 autoFocus={!isEditing}
               />
               {Boolean(titleError) && (
-                <View style={styles.errorRow}>
-                  <Ionicons name="alert-circle" size={14} color={colors.danger} />
+                <View style={styles.errorBanner}>
+                  <Ionicons name="alert-circle" size={13} color={colors.danger} />
                   <Text style={styles.errorText}>{titleError}</Text>
                 </View>
               )}
             </View>
 
-            {/* Description Field (Optional) */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Description (Optional)</Text>
+            {/* Description */}
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>Description (Optional)</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
-                placeholder="Add more details, requirements, or notes..."
+                placeholder="Provide extra context, links, or sub-tasks..."
                 placeholderTextColor={colors.textMuted}
                 value={description}
                 onChangeText={setDescription}
@@ -208,9 +202,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             </View>
 
             {/* Priority Selector */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Priority Level</Text>
-              <View style={styles.optionsRow}>
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>Priority Level</Text>
+              <View style={styles.pillRow}>
                 {priorityList.map((item) => {
                   const isSelected = priority === item.value;
                   return (
@@ -218,23 +212,18 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                       key={item.value}
                       onPress={() => setPriority(item.value)}
                       style={[
-                        styles.optionChip,
+                        styles.selectPill,
                         isSelected && {
                           borderColor: item.color,
-                          backgroundColor:
-                            item.value === 'high'
-                              ? colors.priorityHighBg
-                              : item.value === 'medium'
-                              ? colors.priorityMediumBg
-                              : colors.priorityLowBg,
+                          backgroundColor: item.bg,
                         },
                       ]}
                       activeOpacity={0.7}
                     >
-                      <View style={[styles.priorityDot, { backgroundColor: item.color }]} />
+                      <View style={[styles.colorDot, { backgroundColor: item.color }]} />
                       <Text
                         style={[
-                          styles.optionChipText,
+                          styles.selectPillText,
                           isSelected && { color: item.color, fontWeight: '700' },
                         ]}
                       >
@@ -247,9 +236,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             </View>
 
             {/* Status Selector */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Task Status</Text>
-              <View style={styles.optionsRow}>
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>Status</Text>
+              <View style={styles.pillRow}>
                 {statusList.map((item) => {
                   const isSelected = status === item.value;
                   return (
@@ -257,15 +246,20 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                       key={item.value}
                       onPress={() => setStatus(item.value)}
                       style={[
-                        styles.optionChip,
-                        isSelected && styles.statusChipSelected,
+                        styles.selectPill,
+                        isSelected && styles.statusPillActive,
                       ]}
                       activeOpacity={0.7}
                     >
+                      <Ionicons
+                        name={item.icon}
+                        size={15}
+                        color={isSelected ? colors.primaryDark : colors.textSecondary}
+                      />
                       <Text
                         style={[
-                          styles.optionChipText,
-                          isSelected && styles.statusChipTextSelected,
+                          styles.selectPillText,
+                          isSelected && styles.statusPillTextActive,
                         ]}
                       >
                         {item.label}
@@ -276,9 +270,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({
               </View>
             </View>
 
-            {/* Due Date Field & Shortcuts */}
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Due Date (YYYY-MM-DD)</Text>
+            {/* Due Date & Shortcuts */}
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>Due Date (YYYY-MM-DD)</Text>
               <TextInput
                 style={styles.input}
                 placeholder="YYYY-MM-DD"
@@ -286,9 +280,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 value={dueDate}
                 onChangeText={setDueDate}
               />
-
-              {/* Quick Date Buttons */}
-              <View style={styles.quickDatesRow}>
+              <View style={styles.quickDateRow}>
                 {quickDates.map((item) => {
                   const isSelected = dueDate === item.value;
                   return (
@@ -296,15 +288,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                       key={item.label}
                       onPress={() => setDueDate(item.value)}
                       style={[
-                        styles.quickDateBtn,
-                        isSelected && styles.quickDateBtnSelected,
+                        styles.quickDateItem,
+                        isSelected && styles.quickDateItemActive,
                       ]}
                       activeOpacity={0.7}
                     >
                       <Text
                         style={[
-                          styles.quickDateText,
-                          isSelected && styles.quickDateTextSelected,
+                          styles.quickDateLabel,
+                          isSelected && styles.quickDateLabelActive,
                         ]}
                       >
                         {item.label}
@@ -316,33 +308,33 @@ export const TaskModal: React.FC<TaskModalProps> = ({
             </View>
           </ScrollView>
 
-          {/* Modal Footer / Action Buttons */}
-          <View style={styles.footer}>
+          {/* Footer Actions */}
+          <View style={styles.modalFooter}>
             <TouchableOpacity
               onPress={onClose}
-              style={styles.cancelButton}
+              style={styles.btnCancel}
               disabled={isSubmitting}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.btnCancelText}>Cancel</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={handleSubmit}
-              style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+              style={[styles.btnSubmit, isSubmitting && styles.btnSubmitDisabled]}
               disabled={isSubmitting}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
               {isSubmitting ? (
-                <ActivityIndicator size="small" color={colors.surface} />
+                <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
                 <>
                   <Ionicons
-                    name={isEditing ? 'save-outline' : 'checkmark-sharp'}
-                    size={18}
-                    color={colors.surface}
+                    name={isEditing ? 'save-outline' : 'checkmark'}
+                    size={17}
+                    color="#FFFFFF"
                   />
-                  <Text style={styles.submitButtonText}>
-                    {isEditing ? 'Save Changes' : 'Create Task'}
+                  <Text style={styles.btnSubmitText}>
+                    {isEditing ? 'Save Task' : 'Create Task'}
                   </Text>
                 </>
               )}
@@ -362,7 +354,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.lg,
   },
-  modalCard: {
+  modalSheet: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
     width: '100%',
@@ -370,7 +362,7 @@ const styles = StyleSheet.create({
     ...shadows.lg,
     overflow: 'hidden',
   },
-  header: {
+  modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -383,34 +375,48 @@ const styles = StyleSheet.create({
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
-  headerTitle: {
+  headerIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalTitle: {
     ...typography.h2,
-    fontSize: 18,
+    fontSize: 17,
     color: colors.textPrimary,
   },
-  closeButton: {
-    padding: spacing.xs,
+  modalSubtitle: {
+    ...typography.caption,
+    fontSize: 11,
+    color: colors.textSecondary,
   },
-  scrollContent: {
+  btnDismiss: {
+    padding: 6,
+  },
+  scrollArea: {
     padding: spacing.lg,
     gap: spacing.md,
   },
-  formGroup: {
+  field: {
     gap: 6,
   },
-  labelRow: {
+  fieldLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 3,
   },
-  label: {
+  fieldLabel: {
     ...typography.caption,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.textPrimary,
+    fontSize: 12,
   },
-  requiredAsterisk: {
+  requiredStar: {
     color: colors.danger,
     fontWeight: '700',
   },
@@ -423,16 +429,17 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     ...typography.body,
     color: colors.textPrimary,
+    fontSize: 14,
   },
   inputError: {
     borderColor: colors.danger,
     backgroundColor: colors.dangerBg,
   },
   textArea: {
-    minHeight: 70,
+    minHeight: 65,
     paddingTop: 10,
   },
-  errorRow: {
+  errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -441,48 +448,49 @@ const styles = StyleSheet.create({
   errorText: {
     ...typography.small,
     color: colors.danger,
+    fontSize: 11,
   },
-  optionsRow: {
+  pillRow: {
     flexDirection: 'row',
     gap: spacing.sm,
   },
-  optionChip: {
+  selectPill: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 9,
-    paddingHorizontal: spacing.xs,
     borderRadius: borderRadius.md,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surfaceSubtle,
-    gap: 6,
+    gap: 5,
   },
-  priorityDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+  colorDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
   },
-  optionChipText: {
+  selectPillText: {
     ...typography.caption,
     color: colors.textSecondary,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: '600',
   },
-  statusChipSelected: {
+  statusPillActive: {
     backgroundColor: colors.primaryLight,
     borderColor: colors.primary,
   },
-  statusChipTextSelected: {
+  statusPillTextActive: {
     color: colors.primaryDark,
     fontWeight: '700',
   },
-  quickDatesRow: {
+  quickDateRow: {
     flexDirection: 'row',
     gap: spacing.xs,
     marginTop: 4,
   },
-  quickDateBtn: {
+  quickDateItem: {
     flex: 1,
     paddingVertical: 6,
     borderRadius: borderRadius.sm,
@@ -491,20 +499,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  quickDateBtnSelected: {
+  quickDateItemActive: {
     backgroundColor: colors.primaryLight,
     borderColor: colors.primary,
   },
-  quickDateText: {
+  quickDateLabel: {
     ...typography.small,
     fontSize: 11,
     color: colors.textSecondary,
   },
-  quickDateTextSelected: {
+  quickDateLabelActive: {
     color: colors.primaryDark,
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  footer: {
+  modalFooter: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -515,16 +523,15 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
     backgroundColor: colors.surfaceSubtle,
   },
-  cancelButton: {
+  btnCancel: {
     paddingVertical: 10,
-    paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
   },
-  cancelButtonText: {
+  btnCancelText: {
     ...typography.bodyBold,
     color: colors.textSecondary,
   },
-  submitButton: {
+  btnSubmit: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -532,13 +539,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: spacing.xl,
     borderRadius: borderRadius.md,
-    ...shadows.sm,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  submitButtonDisabled: {
+  btnSubmitDisabled: {
     opacity: 0.6,
   },
-  submitButtonText: {
+  btnSubmitText: {
     ...typography.bodyBold,
-    color: colors.surface,
+    color: '#FFFFFF',
+    fontSize: 13,
   },
 });

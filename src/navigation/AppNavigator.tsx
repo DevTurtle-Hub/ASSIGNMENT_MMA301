@@ -31,7 +31,7 @@ export const AppNavigator: React.FC = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Tasks',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'checkbox' : 'checkbox-outline'}
@@ -78,14 +78,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    height: Platform.OS === 'ios' ? 88 : 65,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+    height: Platform.OS === 'ios' ? 84 : 64,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 8,
     paddingTop: 8,
     ...shadows.sm,
   },
   tabBarLabel: {
     ...typography.caption,
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
+    marginTop: 2,
   },
 });

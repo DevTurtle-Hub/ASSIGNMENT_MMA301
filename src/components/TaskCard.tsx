@@ -21,7 +21,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const isTaskOverdue = isOverdue(task.dueDate) && task.status !== 'done';
   const isDone = task.status === 'done';
 
-  // Priority color and label helper
+  // Priority visual styling
   const getPriorityConfig = (priority: TaskPriority) => {
     switch (priority) {
       case 'high':
@@ -29,6 +29,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           label: 'High Priority',
           color: colors.priorityHigh,
           bg: colors.priorityHighBg,
+          borderColor: colors.priorityHighBorder,
           icon: 'flame' as const,
         };
       case 'medium':
@@ -36,6 +37,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           label: 'Medium',
           color: colors.priorityMedium,
           bg: colors.priorityMediumBg,
+          borderColor: colors.priorityMediumBorder,
           icon: 'alert-circle' as const,
         };
       case 'low':
@@ -44,17 +46,18 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           label: 'Low',
           color: colors.priorityLow,
           bg: colors.priorityLowBg,
+          borderColor: colors.priorityLowBorder,
           icon: 'leaf' as const,
         };
     }
   };
 
-  // Status configuration
+  // Status visual styling
   const getStatusConfig = (status: TaskStatus) => {
     switch (status) {
       case 'done':
         return {
-          label: 'Completed',
+          label: 'Done',
           color: colors.statusDoneText,
           bg: colors.statusDoneBg,
           borderColor: colors.statusDoneBorder,
@@ -63,7 +66,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       case 'in_progress':
         return {
           label: 'In Progress',
-          color: colors.statusInProgressText,
+          color: colors.textPurple,
           bg: colors.statusInProgressBg,
           borderColor: colors.statusInProgressBorder,
           icon: 'time' as const,
@@ -85,25 +88,34 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
   return (
     <View style={[styles.card, isDone && styles.cardDone]}>
-      {/* Priority Bar Indicator on Left */}
+      {/* Priority Colored Accent Strip */}
       <View
         style={[
-          styles.priorityBar,
+          styles.priorityIndicator,
           { backgroundColor: priorityConfig.color },
         ]}
       />
 
-      <View style={styles.cardContent}>
-        {/* Top Meta Row: Priority Badge + Status Pill */}
-        <View style={styles.metaRow}>
-          <View style={[styles.priorityBadge, { backgroundColor: priorityConfig.bg }]}>
-            <Ionicons name={priorityConfig.icon} size={13} color={priorityConfig.color} />
-            <Text style={[styles.priorityText, { color: priorityConfig.color }]}>
+      <View style={styles.cardMain}>
+        {/* Top Meta Line: Priority & Interactive Status Pill */}
+        <View style={styles.headerRow}>
+          {/* Priority Pill */}
+          <View
+            style={[
+              styles.priorityPill,
+              {
+                backgroundColor: priorityConfig.bg,
+                borderColor: priorityConfig.borderColor,
+              },
+            ]}
+          >
+            <Ionicons name={priorityConfig.icon} size={12} color={priorityConfig.color} />
+            <Text style={[styles.priorityPillText, { color: priorityConfig.color }]}>
               {priorityConfig.label}
             </Text>
           </View>
 
-          {/* Interactive Status Pill */}
+          {/* Interactive Status Pill Button */}
           <TouchableOpacity
             onPress={() => onToggleStatus(task)}
             style={[
@@ -116,7 +128,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             activeOpacity={0.7}
           >
             <Ionicons name={statusConfig.icon} size={14} color={statusConfig.color} />
-            <Text style={[styles.statusText, { color: statusConfig.color }]}>
+            <Text style={[styles.statusPillText, { color: statusConfig.color }]}>
               {statusConfig.label}
             </Text>
           </TouchableOpacity>
@@ -124,7 +136,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
         {/* Task Title */}
         <Text
-          style={[styles.title, isDone && styles.titleDone]}
+          style={[styles.taskTitle, isDone && styles.taskTitleDone]}
           numberOfLines={2}
         >
           {task.title}
@@ -133,53 +145,55 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         {/* Task Description */}
         {Boolean(task.description) && (
           <Text
-            style={[styles.description, isDone && styles.descriptionDone]}
-            numberOfLines={3}
+            style={[styles.taskDesc, isDone && styles.taskDescDone]}
+            numberOfLines={2}
           >
             {task.description}
           </Text>
         )}
 
-        {/* Divider */}
-        <View style={styles.divider} />
+        {/* Subtle Horizontal Divider */}
+        <View style={styles.cardDivider} />
 
-        {/* Bottom Row: Due Date & Actions */}
-        <View style={styles.bottomRow}>
-          {/* Due Date */}
-          <View style={styles.dueDateContainer}>
+        {/* Footer Meta Row: Due Date + Action Icons */}
+        <View style={styles.footerRow}>
+          {/* Due Date Indicator */}
+          <View style={styles.dueDateBadge}>
             <Ionicons
-              name={isTaskOverdue ? 'alert-circle' : 'calendar-outline'}
-              size={15}
-              color={isTaskOverdue ? colors.danger : colors.textMuted}
+              name={isTaskOverdue ? 'warning' : 'calendar-outline'}
+              size={13}
+              color={isTaskOverdue ? colors.danger : colors.textSecondary}
             />
             <Text
               style={[
-                styles.dueDateText,
+                styles.dueDateLabel,
                 isTaskOverdue && styles.dueDateOverdue,
               ]}
             >
-              {isTaskOverdue ? `Overdue: ${formatDate(task.dueDate)}` : `Due: ${formatDate(task.dueDate)}`}
+              {isTaskOverdue
+                ? `Overdue (${formatDate(task.dueDate)})`
+                : formatDate(task.dueDate)}
             </Text>
           </View>
 
-          {/* Action Buttons (Edit / Delete) */}
-          <View style={styles.actionsContainer}>
+          {/* Action Buttons */}
+          <View style={styles.actionGroup}>
             <TouchableOpacity
               onPress={() => onEdit(task)}
-              style={styles.actionButton}
+              style={styles.btnEdit}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               activeOpacity={0.7}
             >
-              <Ionicons name="pencil-outline" size={17} color={colors.primary} />
+              <Ionicons name="create-outline" size={16} color={colors.primary} />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => onDelete(task)}
-              style={[styles.actionButton, styles.deleteButton]}
+              style={styles.btnDelete}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               activeOpacity={0.7}
             >
-              <Ionicons name="trash-outline" size={17} color={colors.danger} />
+              <Ionicons name="trash-outline" size={16} color={colors.danger} />
             </TouchableOpacity>
           </View>
         </View>
@@ -201,105 +215,121 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   cardDone: {
-    opacity: 0.85,
     backgroundColor: '#FAFCFF',
+    opacity: 0.88,
   },
-  priorityBar: {
-    width: 5,
+  priorityIndicator: {
+    width: 4.5,
   },
-  cardContent: {
+  cardMain: {
     flex: 1,
     padding: spacing.md,
   },
-  metaRow: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs + 2,
   },
-  priorityBadge: {
+  priorityPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: borderRadius.sm,
+    borderWidth: 1,
     gap: 4,
   },
-  priorityText: {
+  priorityPillText: {
     ...typography.small,
+    fontSize: 10,
     fontWeight: '700',
     textTransform: 'uppercase',
-    fontSize: 10,
   },
   statusPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.sm + 2,
+    paddingHorizontal: 9,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
     borderWidth: 1,
     gap: 4,
   },
-  statusText: {
+  statusPillText: {
     ...typography.small,
-    fontWeight: '600',
+    fontWeight: '700',
+    fontSize: 11,
   },
-  title: {
+  taskTitle: {
     ...typography.h3,
+    fontSize: 16,
     color: colors.textPrimary,
+    marginTop: 2,
     marginBottom: 4,
   },
-  titleDone: {
+  taskTitleDone: {
     textDecorationLine: 'line-through',
     color: colors.textSecondary,
   },
-  description: {
+  taskDesc: {
     ...typography.body,
+    fontSize: 13,
     color: colors.textSecondary,
     marginBottom: spacing.sm,
-    lineHeight: 19,
+    lineHeight: 18,
   },
-  descriptionDone: {
+  taskDescDone: {
     color: colors.textMuted,
   },
-  divider: {
+  cardDivider: {
     height: 1,
-    backgroundColor: colors.surfaceSubtle,
-    marginVertical: spacing.xs + 2,
+    backgroundColor: colors.borderSubtle,
+    marginVertical: 4,
   },
-  bottomRow: {
+  footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 2,
+    paddingTop: 4,
   },
-  dueDateContainer: {
+  dueDateBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 4,
   },
-  dueDateText: {
+  dueDateLabel: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
+    fontWeight: '500',
   },
   dueDateOverdue: {
     color: colors.danger,
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  actionsContainer: {
+  actionGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
   },
-  actionButton: {
+  btnEdit: {
     width: 32,
     height: 32,
     borderRadius: borderRadius.md,
     backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
   },
-  deleteButton: {
+  btnDelete: {
+    width: 32,
+    height: 32,
+    borderRadius: borderRadius.md,
     backgroundColor: colors.dangerBg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
   },
 });

@@ -17,10 +17,10 @@ export const ProfileScreen: React.FC = () => {
   const appInfoList = [
     { label: 'Course Code', value: 'MMA301' },
     { label: 'Exam', value: 'Practical Exam 1' },
-    { label: 'Topic', value: 'React Native, Firebase Setup & CRUD' },
-    { label: 'Frontend Stack', value: 'React Native (Expo SDK 57) + TypeScript' },
-    { label: 'Database', value: isFirestoreLive ? 'Cloud Firestore (Live)' : 'In-Memory / Demo Store' },
-    { label: 'Authentication', value: 'Public / None (Exam 1 Specification)' },
+    { label: 'Framework', value: 'React Native (Expo SDK 57)' },
+    { label: 'Language', value: 'TypeScript' },
+    { label: 'Database', value: isFirestoreLive ? 'Cloud Firestore (Live)' : 'Demo Memory Mode' },
+    { label: 'Auth Status', value: 'Public (No Auth required)' },
   ];
 
   return (
@@ -33,14 +33,14 @@ export const ProfileScreen: React.FC = () => {
         {/* Profile Card Header */}
         <View style={styles.profileCard}>
           <View style={styles.avatarCircle}>
-            <Ionicons name="person" size={40} color={colors.primary} />
+            <Ionicons name="person" size={38} color="#FFFFFF" />
           </View>
           <Text style={styles.userName}>Student Developer</Text>
-          <Text style={styles.userRole}>Mobile App Developer • MMA301</Text>
+          <Text style={styles.userRole}>Mobile Multi-Platform • MMA301</Text>
 
           <View style={styles.badgeRow}>
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>React Native Expo</Text>
+              <Text style={styles.badgeText}>Expo TypeScript</Text>
             </View>
             <View style={[styles.badge, styles.badgeFirebase]}>
               <Text style={[styles.badgeText, styles.badgeFirebaseText]}>Cloud Firestore</Text>
@@ -48,8 +48,8 @@ export const ProfileScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Project & Exam Technical Details */}
-        <Text style={styles.sectionHeader}>Exam Technical Specifications</Text>
+        {/* Technical Specs Card */}
+        <Text style={styles.sectionHeader}>System Specifications</Text>
         <View style={styles.detailsCard}>
           {appInfoList.map((item, idx) => (
             <View
@@ -65,14 +65,14 @@ export const ProfileScreen: React.FC = () => {
           ))}
         </View>
 
-        {/* Exam 2 Preview Note */}
+        {/* Exam 2 Notice */}
         <View style={styles.noticeCard}>
-          <Ionicons name="information-circle-outline" size={20} color={colors.primary} />
+          <Ionicons name="shield-checkmark-outline" size={20} color={colors.primary} />
           <View style={styles.noticeContent}>
-            <Text style={styles.noticeTitle}>User Authentication in Exam 2</Text>
+            <Text style={styles.noticeTitle}>Authentication in Practical Exam 2</Text>
             <Text style={styles.noticeText}>
-              Firebase Authentication (Email/Password, Google Sign-in) and user profile management
-              will be integrated in Practical Exam 2.
+              Firebase Authentication (Email/Password, Google Login) and profile syncing will be
+              fully integrated in the next exam.
             </Text>
           </View>
         </View>
@@ -101,17 +101,22 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   avatarCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primaryLight,
+    width: 74,
+    height: 74,
+    borderRadius: 37,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
   userName: {
     ...typography.h2,
-    fontSize: 20,
+    fontSize: 18,
     color: colors.textPrimary,
     marginBottom: 2,
   },
@@ -129,23 +134,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
   },
   badgeText: {
     ...typography.small,
     color: colors.primaryDark,
-    fontWeight: '600',
+    fontWeight: '700',
+    fontSize: 11,
   },
   badgeFirebase: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: colors.secondaryLight,
+    borderColor: colors.secondaryBorder,
   },
   badgeFirebaseText: {
-    color: '#B45309',
+    color: colors.secondaryDark,
   },
   sectionHeader: {
     ...typography.h3,
+    fontSize: 15,
     color: colors.textPrimary,
     marginBottom: spacing.sm,
-    marginTop: spacing.xs,
   },
   detailsCard: {
     backgroundColor: colors.surface,
@@ -170,12 +179,12 @@ const styles = StyleSheet.create({
   detailLabel: {
     ...typography.caption,
     color: colors.textSecondary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   detailValue: {
     ...typography.bodyBold,
     color: colors.textPrimary,
-    fontSize: 13,
+    fontSize: 12,
   },
   noticeCard: {
     flexDirection: 'row',
@@ -184,7 +193,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     gap: spacing.sm,
     borderWidth: 1,
-    borderColor: '#C7D2FE',
+    borderColor: colors.primaryBorder,
   },
   noticeContent: {
     flex: 1,
@@ -192,6 +201,7 @@ const styles = StyleSheet.create({
   noticeTitle: {
     ...typography.bodyBold,
     color: colors.primaryDark,
+    fontSize: 13,
     marginBottom: 2,
   },
   noticeText: {

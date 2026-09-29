@@ -34,11 +34,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     { label: 'All', value: 'all', count: stats.total },
     { label: 'To Do', value: 'todo', count: stats.todo },
     { label: 'In Progress', value: 'in_progress', count: stats.inProgress },
-    { label: 'Completed', value: 'done', count: stats.done },
+    { label: 'Done', value: 'done', count: stats.done },
   ];
 
   const priorityOptions: { label: string; value: TaskFilterPriority; color: string }[] = [
-    { label: 'All Priority', value: 'all', color: colors.textSecondary },
+    { label: 'All Priorities', value: 'all', color: colors.textSecondary },
     { label: 'High', value: 'high', color: colors.priorityHigh },
     { label: 'Medium', value: 'medium', color: colors.priorityMedium },
     { label: 'Low', value: 'low', color: colors.priorityLow },
@@ -46,12 +46,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Search Input */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={18} color={colors.textMuted} style={styles.searchIcon} />
+      {/* Search Input Bar */}
+      <View style={styles.searchBox}>
+        <Ionicons name="search" size={17} color={colors.primary} style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search tasks by title or description..."
+          placeholder="Search tasks..."
           placeholderTextColor={colors.textMuted}
           value={searchQuery}
           onChangeText={onSearchChange}
@@ -61,19 +61,19 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         {Boolean(searchQuery) && (
           <TouchableOpacity
             onPress={() => onSearchChange('')}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            style={styles.clearButton}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.clearBtn}
           >
-            <Ionicons name="close-circle" size={18} color={colors.textMuted} />
+            <Ionicons name="close-circle" size={17} color={colors.textMuted} />
           </TouchableOpacity>
         )}
       </View>
 
-      {/* Status Filter Chips */}
+      {/* Status Segmented Tabs */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chipsScroll}
+        contentContainerStyle={styles.statusRow}
       >
         {statusOptions.map((item) => {
           const isSelected = statusFilter === item.value;
@@ -82,29 +82,29 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               key={item.value}
               onPress={() => onStatusChange(item.value)}
               style={[
-                styles.chip,
-                isSelected ? styles.chipSelected : styles.chipUnselected,
+                styles.statusTab,
+                isSelected ? styles.statusTabActive : styles.statusTabInactive,
               ]}
               activeOpacity={0.7}
             >
               <Text
                 style={[
-                  styles.chipText,
-                  isSelected ? styles.chipTextSelected : styles.chipTextUnselected,
+                  styles.statusTabText,
+                  isSelected ? styles.statusTabTextActive : styles.statusTabTextInactive,
                 ]}
               >
                 {item.label}
               </Text>
               <View
                 style={[
-                  styles.countBadge,
-                  isSelected ? styles.countBadgeSelected : styles.countBadgeUnselected,
+                  styles.badgeCount,
+                  isSelected ? styles.badgeCountActive : styles.badgeCountInactive,
                 ]}
               >
                 <Text
                   style={[
-                    styles.countText,
-                    isSelected ? styles.countTextSelected : styles.countTextUnselected,
+                    styles.badgeText,
+                    isSelected ? styles.badgeTextActive : styles.badgeTextInactive,
                   ]}
                 >
                   {item.count}
@@ -115,11 +115,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         })}
       </ScrollView>
 
-      {/* Priority Filter Chips */}
+      {/* Priority Chips */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.priorityScroll}
+        contentContainerStyle={styles.priorityRow}
       >
         {priorityOptions.map((item) => {
           const isSelected = priorityFilter === item.value;
@@ -129,7 +129,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               onPress={() => onPriorityChange(item.value)}
               style={[
                 styles.priorityChip,
-                isSelected ? styles.priorityChipSelected : styles.priorityChipUnselected,
+                isSelected ? styles.priorityChipActive : styles.priorityChipInactive,
               ]}
               activeOpacity={0.7}
             >
@@ -138,10 +138,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               )}
               <Text
                 style={[
-                  styles.priorityChipText,
-                  isSelected
-                    ? styles.priorityChipTextSelected
-                    : styles.priorityChipTextUnselected,
+                  styles.priorityText,
+                  isSelected ? styles.priorityTextActive : styles.priorityTextInactive,
                 ]}
               >
                 {item.label}
@@ -159,7 +157,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     backgroundColor: colors.background,
   },
-  searchContainer: {
+  searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
@@ -169,7 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     borderWidth: 1,
     borderColor: colors.border,
-    height: 42,
+    height: 44,
   },
   searchIcon: {
     marginRight: spacing.xs,
@@ -179,16 +177,17 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textPrimary,
     paddingVertical: 0,
+    fontSize: 14,
   },
-  clearButton: {
-    padding: spacing.xs,
+  clearBtn: {
+    padding: 4,
   },
-  chipsScroll: {
+  statusRow: {
     paddingHorizontal: spacing.lg,
     gap: spacing.sm,
-    paddingBottom: spacing.xs,
+    paddingBottom: 6,
   },
-  chip: {
+  statusTab: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 6,
@@ -197,49 +196,50 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 6,
   },
-  chipSelected: {
+  statusTabActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
-  chipUnselected: {
+  statusTabInactive: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
   },
-  chipText: {
+  statusTabText: {
     ...typography.caption,
     fontWeight: '600',
+    fontSize: 13,
   },
-  chipTextSelected: {
-    color: colors.surface,
+  statusTabTextActive: {
+    color: '#FFFFFF',
   },
-  chipTextUnselected: {
+  statusTabTextInactive: {
     color: colors.textSecondary,
   },
-  countBadge: {
+  badgeCount: {
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: borderRadius.full,
   },
-  countBadgeSelected: {
+  badgeCountActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
   },
-  countBadgeUnselected: {
+  badgeCountInactive: {
     backgroundColor: colors.surfaceSubtle,
   },
-  countText: {
+  badgeText: {
     fontSize: 11,
     fontWeight: '700',
   },
-  countTextSelected: {
-    color: colors.surface,
+  badgeTextActive: {
+    color: '#FFFFFF',
   },
-  countTextUnselected: {
+  badgeTextInactive: {
     color: colors.textSecondary,
   },
-  priorityScroll: {
+  priorityRow: {
     paddingHorizontal: spacing.lg,
     gap: spacing.xs,
-    paddingTop: 4,
+    paddingTop: 2,
     paddingBottom: 2,
   },
   priorityChip: {
@@ -249,13 +249,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm + 2,
     borderRadius: borderRadius.sm,
     borderWidth: 1,
-    gap: 4,
+    gap: 5,
   },
-  priorityChipSelected: {
+  priorityChipActive: {
     backgroundColor: colors.primaryLight,
     borderColor: colors.primary,
   },
-  priorityChipUnselected: {
+  priorityChipInactive: {
     backgroundColor: 'transparent',
     borderColor: colors.border,
   },
@@ -264,14 +264,16 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
   },
-  priorityChipText: {
+  priorityText: {
     ...typography.small,
+    fontSize: 11,
   },
-  priorityChipTextSelected: {
+  priorityTextActive: {
     color: colors.primaryDark,
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  priorityChipTextUnselected: {
+  priorityTextInactive: {
     color: colors.textSecondary,
+    fontWeight: '500',
   },
 });

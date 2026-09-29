@@ -19,7 +19,7 @@ import { TaskModal } from '../components/TaskModal';
 import { DeleteConfirmModal } from '../components/DeleteConfirmModal';
 import { EmptyState } from '../components/EmptyState';
 import { Task } from '../types/task';
-import { colors, spacing, borderRadius, shadows } from '../theme';
+import { colors, spacing, borderRadius } from '../theme';
 
 export const HomeScreen: React.FC = () => {
   const {
@@ -46,23 +46,20 @@ export const HomeScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  // Delete confirmation states
+  // Delete modal states
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
-  // Open Create Modal
   const openCreateModal = () => {
     setEditingTask(null);
     setModalVisible(true);
   };
 
-  // Open Edit Modal
   const openEditModal = (task: Task) => {
     setEditingTask(task);
     setModalVisible(true);
   };
 
-  // Open Delete Confirmation
   const openDeleteModal = (task: Task) => {
     setTaskToDelete(task);
     setDeleteModalVisible(true);
@@ -81,7 +78,7 @@ export const HomeScreen: React.FC = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
       <View style={styles.container}>
-        {/* Header with App Info & Statistics */}
+        {/* App Header & Live Stats */}
         <Header stats={stats} isLiveFirestore={isLiveFirestore} />
 
         {/* Search & Filter Bar */}
@@ -95,7 +92,7 @@ export const HomeScreen: React.FC = () => {
           stats={stats}
         />
 
-        {/* Error Notification Banner if any */}
+        {/* Error Banner */}
         {Boolean(error) && (
           <View style={styles.errorBanner}>
             <Ionicons name="warning-outline" size={16} color={colors.danger} />
@@ -107,7 +104,7 @@ export const HomeScreen: React.FC = () => {
         {loading && !refreshing ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={styles.loadingText}>Syncing tasks with Firestore...</Text>
+            <Text style={styles.loadingText}>Syncing tasks with Cloud Firestore...</Text>
           </View>
         ) : (
           <FlatList
@@ -141,16 +138,16 @@ export const HomeScreen: React.FC = () => {
           />
         )}
 
-        {/* Floating Action Button (FAB) to Add Task */}
+        {/* Floating Action Button (FAB) */}
         <TouchableOpacity
           style={styles.fab}
           onPress={openCreateModal}
           activeOpacity={0.85}
         >
-          <Ionicons name="add" size={28} color={colors.surface} />
+          <Ionicons name="add" size={28} color="#FFFFFF" />
         </TouchableOpacity>
 
-        {/* Create / Edit Task Modal */}
+        {/* Create / Edit Modal */}
         <TaskModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
@@ -159,7 +156,7 @@ export const HomeScreen: React.FC = () => {
           taskToEdit={editingTask}
         />
 
-        {/* Delete Confirmation Modal */}
+        {/* Delete Modal */}
         <DeleteConfirmModal
           visible={deleteModalVisible}
           task={taskToDelete}
@@ -185,7 +182,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingTop: spacing.xs,
-    paddingBottom: 90, // Extra space for FAB and Bottom Bar
+    paddingBottom: 95,
   },
   loadingContainer: {
     flex: 1,
@@ -195,7 +192,8 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: colors.textSecondary,
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: '500',
   },
   errorBanner: {
     flexDirection: 'row',
@@ -207,23 +205,29 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.md,
     gap: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
   },
   errorBannerText: {
     color: colors.dangerDark,
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
     flex: 1,
   },
   fab: {
     position: 'absolute',
     right: spacing.xl,
     bottom: spacing.xxl,
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.lg,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
   },
 });

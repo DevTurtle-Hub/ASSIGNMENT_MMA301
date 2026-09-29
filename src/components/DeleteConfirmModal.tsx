@@ -32,56 +32,46 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
     setIsDeleting(true);
     try {
       const success = await onConfirmDelete(task.id);
-      if (success) {
-        onClose();
-      }
+      if (success) onClose();
     } finally {
       setIsDeleting(false);
     }
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <View style={styles.modalCard}>
-          {/* Warning Icon */}
+        <View style={styles.dialogCard}>
           <View style={styles.iconCircle}>
-            <Ionicons name="trash-outline" size={28} color={colors.danger} />
+            <Ionicons name="trash" size={26} color={colors.danger} />
           </View>
 
-          {/* Title & Message */}
-          <Text style={styles.title}>Delete Task?</Text>
-          <Text style={styles.message}>
-            Are you sure you want to permanently delete{' '}
-            <Text style={styles.taskTitleHighlight}>"{task.title}"</Text>? This action cannot be
-            undone.
+          <Text style={styles.dialogTitle}>Delete Task?</Text>
+          <Text style={styles.dialogMessage}>
+            Are you sure you want to delete{' '}
+            <Text style={styles.highlightText}>"{task.title}"</Text>? This action will remove the
+            document from Cloud Firestore.
           </Text>
 
-          {/* Buttons */}
-          <View style={styles.buttonRow}>
+          <View style={styles.btnRow}>
             <TouchableOpacity
               onPress={onClose}
-              style={styles.cancelBtn}
+              style={styles.btnCancel}
               disabled={isDeleting}
             >
-              <Text style={styles.cancelBtnText}>Cancel</Text>
+              <Text style={styles.btnCancelText}>Cancel</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={handleDelete}
-              style={[styles.deleteBtn, isDeleting && styles.deleteBtnDisabled]}
+              style={[styles.btnDelete, isDeleting && styles.btnDeleteDisabled]}
               disabled={isDeleting}
               activeOpacity={0.8}
             >
               {isDeleting ? (
-                <ActivityIndicator size="small" color={colors.surface} />
+                <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
-                <Text style={styles.deleteBtnText}>Delete</Text>
+                <Text style={styles.btnDeleteText}>Delete</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -99,72 +89,76 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.xl,
   },
-  modalCard: {
+  dialogCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
     padding: spacing.xl,
     width: '100%',
-    maxWidth: 380,
+    maxWidth: 360,
     alignItems: 'center',
     ...shadows.lg,
   },
   iconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: colors.dangerBg,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
   },
-  title: {
+  dialogTitle: {
     ...typography.h2,
-    fontSize: 20,
+    fontSize: 18,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
-  message: {
+  dialogMessage: {
     ...typography.body,
+    fontSize: 13,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginBottom: spacing.xl,
-    lineHeight: 20,
+    marginBottom: spacing.lg,
+    lineHeight: 19,
   },
-  taskTitleHighlight: {
+  highlightText: {
     fontWeight: '700',
     color: colors.textPrimary,
   },
-  buttonRow: {
+  btnRow: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: spacing.sm,
     width: '100%',
   },
-  cancelBtn: {
+  btnCancel: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 11,
     borderRadius: borderRadius.md,
     backgroundColor: colors.surfaceSubtle,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.border,
   },
-  cancelBtnText: {
+  btnCancelText: {
     ...typography.bodyBold,
     color: colors.textSecondary,
+    fontSize: 13,
   },
-  deleteBtn: {
+  btnDelete: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 11,
     borderRadius: borderRadius.md,
     backgroundColor: colors.danger,
     alignItems: 'center',
-    ...shadows.sm,
   },
-  deleteBtnDisabled: {
+  btnDeleteDisabled: {
     opacity: 0.6,
   },
-  deleteBtnText: {
+  btnDeleteText: {
     ...typography.bodyBold,
-    color: colors.surface,
+    color: '#FFFFFF',
+    fontSize: 13,
   },
 });

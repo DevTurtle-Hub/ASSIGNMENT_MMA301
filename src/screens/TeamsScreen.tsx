@@ -6,24 +6,32 @@ import { colors, spacing, borderRadius, typography, shadows } from '../theme';
 export const TeamsScreen: React.FC = () => {
   const upcomingFeatures = [
     {
-      icon: 'people-outline' as const,
+      icon: 'people' as const,
+      color: colors.primary,
+      bg: colors.primaryLight,
       title: 'Team Workspaces',
-      description: 'Create and manage cross-functional teams with role-based member permissions.',
+      description: 'Create and organize dedicated spaces for project squads with member permissions.',
     },
     {
-      icon: 'person-add-outline' as const,
-      title: 'Task Assignment',
-      description: 'Assign tasks directly to team members using the assigneeId Firestore field.',
+      icon: 'person-add' as const,
+      color: colors.secondary,
+      bg: colors.secondaryLight,
+      title: 'Task Assignment (assigneeId)',
+      description: 'Assign tasks to specific team members utilizing the pre-built assigneeId schema.',
     },
     {
-      icon: 'chatbubbles-outline' as const,
-      title: 'Team Collaboration & Comments',
-      description: 'Leave comments, updates, and attachments directly on assigned team tasks.',
+      icon: 'git-branch' as const,
+      color: colors.accentAmber,
+      bg: colors.accentAmberLight,
+      title: 'Multi-tenant Teams (teamId)',
+      description: 'Filter and partition task boards by team workspaces effortlessly.',
     },
     {
-      icon: 'analytics-outline' as const,
-      title: 'Team Analytics & Workload',
-      description: 'Track team velocity, workload distribution, and milestone completion rates.',
+      icon: 'stats-chart' as const,
+      color: colors.primary,
+      bg: colors.primaryLight,
+      title: 'Workload & Velocity Analytics',
+      description: 'Track team sprint progress, completed milestones, and distribution in real-time.',
     },
   ];
 
@@ -34,44 +42,44 @@ export const TeamsScreen: React.FC = () => {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        {/* Banner Section */}
+        {/* Hero Card */}
         <View style={styles.heroCard}>
           <View style={styles.badge}>
-            <Ionicons name="sparkles" size={13} color={colors.primaryDark} />
-            <Text style={styles.badgeText}>PRACTICAL EXAM 2</Text>
+            <Ionicons name="sparkles" size={12} color={colors.primaryDark} />
+            <Text style={styles.badgeText}>PRACTICAL EXAM 2 PREVIEW</Text>
           </View>
 
           <View style={styles.iconCircle}>
-            <Ionicons name="people" size={38} color={colors.primary} />
+            <Ionicons name="people" size={36} color="#FFFFFF" />
           </View>
 
           <Text style={styles.heroTitle}>Teams & Collaboration</Text>
           <Text style={styles.heroSubtitle}>
-            Team workspaces, member roles, and task assignment features are coming soon in Practical Exam 2!
+            Collaborative team workspaces, member roles, and task assignment will be built in Practical Exam 2.
           </Text>
         </View>
 
-        {/* Firestore Model Integration Card */}
+        {/* Firestore Model Info Card */}
         <View style={styles.infoCard}>
           <View style={styles.infoHeader}>
-            <Ionicons name="layers-outline" size={18} color={colors.primary} />
-            <Text style={styles.infoTitle}>Firestore Data Model Ready</Text>
+            <Ionicons name="hardware-chip-outline" size={17} color={colors.secondaryDark} />
+            <Text style={styles.infoTitle}>Firestore Schema Ready</Text>
           </View>
           <Text style={styles.infoDescription}>
-            The current Firestore <Text style={styles.codeText}>tasks</Text> collection schema already includes placeholder fields for{' '}
+            The <Text style={styles.codeText}>tasks</Text> collection in Firestore already contains schema fields for{' '}
             <Text style={styles.codeText}>teamId</Text> and{' '}
-            <Text style={styles.codeText}>assigneeId</Text>, ready for seamless integration.
+            <Text style={styles.codeText}>assigneeId</Text> for rapid Exam 2 expansion.
           </Text>
         </View>
 
-        {/* Upcoming Features Section */}
-        <Text style={styles.sectionHeader}>Upcoming Features</Text>
+        {/* Feature Highlights */}
+        <Text style={styles.sectionHeader}>Upcoming Roadmap</Text>
 
         <View style={styles.featuresList}>
           {upcomingFeatures.map((item, index) => (
             <View key={index} style={styles.featureItem}>
-              <View style={styles.featureIconBox}>
-                <Ionicons name={item.icon} size={22} color={colors.primary} />
+              <View style={[styles.featureIconBox, { backgroundColor: item.bg }]}>
+                <Ionicons name={item.icon} size={20} color={item.color} />
               </View>
               <View style={styles.featureTextContainer}>
                 <Text style={styles.featureTitle}>{item.title}</Text>
@@ -113,6 +121,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: borderRadius.full,
     marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
   },
   badgeText: {
     ...typography.small,
@@ -122,63 +132,70 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   iconCircle: {
-    width: 74,
-    height: 74,
-    borderRadius: 37,
-    backgroundColor: colors.primaryLight,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.md,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
   heroTitle: {
     ...typography.h1,
-    fontSize: 22,
+    fontSize: 20,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
     textAlign: 'center',
   },
   heroSubtitle: {
     ...typography.body,
+    fontSize: 13,
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 19,
   },
   infoCard: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.secondaryLight,
     borderRadius: borderRadius.lg,
-    padding: spacing.lg,
+    padding: spacing.md,
     marginBottom: spacing.xl,
     borderWidth: 1,
-    borderColor: '#C7D2FE',
+    borderColor: colors.secondaryBorder,
   },
   infoHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
-    marginBottom: spacing.xs,
+    gap: 6,
+    marginBottom: 4,
   },
   infoTitle: {
     ...typography.h3,
-    fontSize: 15,
-    color: colors.primaryDark,
+    fontSize: 14,
+    color: colors.secondaryDark,
   },
   infoDescription: {
     ...typography.body,
     color: colors.textPrimary,
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: 12,
+    lineHeight: 18,
   },
   codeText: {
     fontWeight: '700',
-    color: colors.primaryDark,
+    color: colors.secondaryDark,
   },
   sectionHeader: {
     ...typography.h3,
+    fontSize: 15,
     color: colors.textPrimary,
     marginBottom: spacing.md,
   },
   featuresList: {
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   featureItem: {
     flexDirection: 'row',
@@ -192,10 +209,9 @@ const styles = StyleSheet.create({
     ...shadows.sm,
   },
   featureIconBox: {
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.surfaceSubtle,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -205,11 +221,13 @@ const styles = StyleSheet.create({
   featureTitle: {
     ...typography.bodyBold,
     color: colors.textPrimary,
+    fontSize: 13,
     marginBottom: 2,
   },
   featureDescription: {
     ...typography.caption,
     color: colors.textSecondary,
+    fontSize: 12,
     lineHeight: 16,
   },
 });

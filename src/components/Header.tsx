@@ -7,6 +7,20 @@ interface HeaderProps {
   stats: TaskStats;
 }
 
+// Letter-by-letter smooth Blue to Electric Cyan gradient mapping matching the reference image
+const GRADIENT_MANAGEMENT = [
+  { char: 'M', color: '#2563EB' },
+  { char: 'a', color: '#246EF0' },
+  { char: 'n', color: '#1D7DF4' },
+  { char: 'a', color: '#128DF9' },
+  { char: 'g', color: '#079CFD' },
+  { char: 'e', color: '#00ABFF' },
+  { char: 'm', color: '#00BAFF' },
+  { char: 'e', color: '#00C8FF' },
+  { char: 'n', color: '#00D6FF' },
+  { char: 't', color: '#00E5FF' },
+];
+
 export const Header: React.FC<HeaderProps> = ({ stats }) => {
   return (
     <View style={styles.container}>
@@ -36,11 +50,14 @@ export const Header: React.FC<HeaderProps> = ({ stats }) => {
           <Text style={styles.tagText}>Technical Foundation • Assignment 1</Text>
         </View>
 
-        {/* Big Heading: Task & Team Management */}
+        {/* Big Heading: Task & Team Management with Smooth Gradient */}
         <Text style={styles.heroHeadline}>
           Task & Team{' '}
-          <Text style={styles.headlineBlue}>Manage</Text>
-          <Text style={styles.headlineCyan}>ment</Text>
+          {GRADIENT_MANAGEMENT.map((item, index) => (
+            <Text key={index} style={{ color: item.color }}>
+              {item.char}
+            </Text>
+          ))}
         </Text>
 
         {/* Subtitle */}
@@ -49,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ stats }) => {
         </Text>
       </View>
 
-      {/* 3 Stats Cards Row (Exactly matching reference UI) */}
+      {/* 3 Stats Cards Row (Matching Reference UI) */}
       <View style={styles.statsContainer}>
         {/* TO DO Card */}
         <View style={styles.statCard}>
@@ -162,12 +179,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     letterSpacing: -0.5,
     marginBottom: 2,
-  },
-  headlineBlue: {
-    color: '#2563EB',
-  },
-  headlineCyan: {
-    color: '#00C5FF',
   },
   heroSubtitle: {
     fontSize: 11.5,

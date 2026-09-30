@@ -21,14 +21,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const isTaskOverdue = isOverdue(task.dueDate) && task.status !== 'done';
   const isDone = task.status === 'done';
 
-  // Harmonious priority styling with left accent strip color
+  // Harmonious priority styling
   const getPriorityConfig = (priority: TaskPriority) => {
     switch (priority) {
       case 'high':
         return {
           label: 'HIGH',
           color: '#E11D48',
-          stripeColor: '#F43F5E',
           bg: '#FFF1F2',
           border: '#FFE4E6',
         };
@@ -36,7 +35,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         return {
           label: 'MEDIUM',
           color: '#D97706',
-          stripeColor: '#F59E0B',
           bg: '#FFFBEB',
           border: '#FEF3C7',
         };
@@ -45,7 +43,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         return {
           label: 'LOW',
           color: '#0284C7',
-          stripeColor: '#00C5FF',
           bg: '#F0F9FF',
           border: '#E0F2FE',
         };
@@ -86,13 +83,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const priorityConfig = getPriorityConfig(task.priority);
   const statusConfig = getStatusConfig(task.status);
 
-  // Left strip color: Green if done, otherwise priority blended color
-  const stripeColor = isDone ? '#10B981' : priorityConfig.stripeColor;
-
   return (
     <View style={[styles.card, isDone && styles.cardDone]}>
-      {/* Harmonious Left Color Accent Stripe */}
-      <View style={[styles.accentStripe, { backgroundColor: stripeColor }]} />
+      {/* Left Color Accent Stripe: Synchronized with the app's primary brand color */}
+      <View style={styles.accentStripe} />
 
       <View style={styles.cardContent}>
         {/* Top Header Row: Priority + Status Pill */}
@@ -201,6 +195,7 @@ const styles = StyleSheet.create({
   },
   accentStripe: {
     width: 4,
+    backgroundColor: colors.cyan,
   },
   cardContent: {
     flex: 1,

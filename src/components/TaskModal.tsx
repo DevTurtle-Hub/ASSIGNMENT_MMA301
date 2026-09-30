@@ -136,7 +136,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 <Ionicons
                   name={isEditing ? 'create-outline' : 'add'}
                   size={18}
-                  color="#4F46E5"
+                  color="#2563EB"
                 />
               </View>
               <Text style={styles.headerTitle}>
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   },
   gradientStripe: {
     height: 4,
-    backgroundColor: '#4F46E5',
+    backgroundColor: colors.cyan,
   },
   header: {
     flexDirection: 'row',
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: borderRadius.sm,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#EFF6FF',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   asterisk: {
-    color: '#4F46E5',
+    color: colors.primary,
     fontWeight: '700',
   },
   input: {
@@ -455,8 +455,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   selectPillActive: {
-    backgroundColor: '#EEF2FF',
-    borderColor: '#4F46E5',
+    backgroundColor: '#EFF6FF',
+    borderColor: colors.primary,
   },
   selectPillText: {
     fontSize: 11,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   selectPillTextActive: {
-    color: '#4F46E5',
+    color: colors.primary,
     fontWeight: '700',
   },
   priorityDot: {
@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   quickDateBtnActive: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#EFF6FF',
   },
   quickDateText: {
     fontSize: 10,
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   quickDateTextActive: {
-    color: '#4F46E5',
+    color: colors.primary,
     fontWeight: '700',
   },
   footer: {
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   gradientButton: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: colors.primary,
     paddingVertical: 9,
     paddingHorizontal: 18,
     borderRadius: borderRadius.sm + 2,

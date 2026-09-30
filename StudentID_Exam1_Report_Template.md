@@ -14,7 +14,7 @@
 ---
 
 ### 🔗 PROJECT & REPOSITORY LINKS
-- **Public GitHub Repository**: `https://github.com/[YOUR_USERNAME]/[YOUR_REPO_NAME]`
+- **Public GitHub Repository**: `https://github.com/DevTurtle-Hub/ASSIGNMENT_MMA301`
 - **Expo Project Link / QR Code / APK Download**: `https://expo.dev/@[YOUR_EXPO_USERNAME]/[YOUR_PROJECT_NAME]`
 
 ---

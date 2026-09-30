@@ -5,6 +5,7 @@ import { TaskStats } from '../types/task';
 
 interface HeaderProps {
   stats: TaskStats;
+  isLive?: boolean;
 }
 
 // Letter-by-letter smooth Blue to Electric Cyan gradient mapping matching the reference image
@@ -21,7 +22,7 @@ const GRADIENT_MANAGEMENT = [
   { char: 't', color: '#00E5FF' },
 ];
 
-export const Header: React.FC<HeaderProps> = ({ stats }) => {
+export const Header: React.FC<HeaderProps> = ({ stats, isLive = false }) => {
   return (
     <View style={styles.container}>
       {/* Top Navbar */}
@@ -36,9 +37,12 @@ export const Header: React.FC<HeaderProps> = ({ stats }) => {
           </Text>
         </View>
 
-        {/* Right side: Clean Home Pill */}
-        <View style={styles.homePill}>
-          <Text style={styles.homePillText}>Home</Text>
+        {/* Right side: Firestore status pill */}
+        <View style={[styles.homePill, isLive && styles.homePillLive]}>
+          <View style={[styles.statusDot, isLive ? styles.statusDotLive : styles.statusDotDemo]} />
+          <Text style={[styles.homePillText, isLive && styles.homePillTextLive]}>
+            {isLive ? 'Firestore Live' : 'Demo Mode'}
+          </Text>
         </View>
       </View>
 
@@ -138,15 +142,37 @@ const styles = StyleSheet.create({
     color: '#00C5FF',
   },
   homePill: {
-    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: borderRadius.md,
-    backgroundColor: '#EFF6FF',
+    backgroundColor: '#F1F5F9',
+    gap: 5,
+  },
+  homePillLive: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#DCFCE7',
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusDotLive: {
+    backgroundColor: '#16A34A',
+  },
+  statusDotDemo: {
+    backgroundColor: '#94A3B8',
   },
   homePillText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
-    color: '#2563EB',
+    color: colors.textSecondary,
+  },
+  homePillTextLive: {
+    color: '#16A34A',
   },
   heroSection: {
     marginBottom: spacing.sm + 2,

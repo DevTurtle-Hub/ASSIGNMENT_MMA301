@@ -39,6 +39,7 @@ export const HomeScreen: React.FC = () => {
     handleUpdateTask,
     handleDeleteTask,
     handleToggleStatus,
+    isLiveFirestore,
   } = useTasks();
 
   // Modal states
@@ -75,8 +76,8 @@ export const HomeScreen: React.FC = () => {
 
   const renderHeader = () => (
     <View>
-      {/* App Header with TF Brand & Stats */}
-      <Header stats={stats} />
+      {/* App Header with TF Brand, Stats & Live Connection Status */}
+      <Header stats={stats} isLive={isLiveFirestore} />
 
       {/* Search & Filter Bar */}
       <FilterBar

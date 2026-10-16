@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Task, TaskPriority, TaskStatus, CreateTaskInput, UpdateTaskInput } from '../types/task';
+import { Team, TeamMember } from '../types/team';
+import { useAuth } from '../contexts/AuthContext';
+import { subscribeUserTeams, subscribeTeamMembers } from '../services/teamService';
 import { colors, spacing, borderRadius, shadows } from '../theme';
 import { getTodayString, getFutureDateString } from '../utils/dateUtils';
 
@@ -31,6 +34,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   onSubmitUpdate,
   taskToEdit,
 }) => {
+  const { user } = useAuth();
   const isEditing = Boolean(taskToEdit);
 
   const [title, setTitle] = useState('');
@@ -39,8 +43,38 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const [priority, setPriority] = useState<TaskPriority>('medium');
   const [dueDate, setDueDate] = useState(getTodayString());
 
+  // Team & Assignee states (Functional Requirement 3)
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+  const [selectedTeamName, setSelectedTeamName] = useState<string | null>(null);
+  const [selectedAssigneeId, setSelectedAssigneeId] = useState<string | null>(null);
+  const [selectedAssigneeName, setSelectedAssigneeName] = useState<string | null>(null);
+
+  const [userTeams, setUserTeams] = useState<Team[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
   const [titleError, setTitleError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Load user teams
+  useEffect(() => {
+    if (!visible || !user) return;
+    const unsubTeams = subscribeUserTeams(user.id, (teams) => {
+      setUserTeams(teams);
+    });
+    return () => unsubTeams();
+  }, [visible, user]);
+
+  // Load members of selected team
+  useEffect(() => {
+    if (!selectedTeamId) {
+      setTeamMembers([]);
+      return;
+    }
+    const unsubMembers = subscribeTeamMembers(selectedTeamId, (members) => {
+      setTeamMembers(members);
+    });
+    return () => unsubMembers();
+  }, [selectedTeamId]);
 
   useEffect(() => {
     if (visible) {
@@ -50,12 +84,20 @@ export const TaskModal: React.FC<TaskModalProps> = ({
         setStatus(taskToEdit.status);
         setPriority(taskToEdit.priority);
         setDueDate(taskToEdit.dueDate || getTodayString());
+        setSelectedTeamId(taskToEdit.teamId || null);
+        setSelectedTeamName(taskToEdit.teamName || null);
+        setSelectedAssigneeId(taskToEdit.assigneeId || null);
+        setSelectedAssigneeName(taskToEdit.assigneeName || null);
       } else {
         setTitle('');
         setDescription('');
         setStatus('todo');
         setPriority('medium');
         setDueDate(getTodayString());
+        setSelectedTeamId(null);
+        setSelectedTeamName(null);
+        setSelectedAssigneeId(null);
+        setSelectedAssigneeName(null);
       }
       setTitleError(null);
       setIsSubmitting(false);
@@ -76,23 +118,23 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
     setIsSubmitting(true);
     try {
+      const payload = {
+        title: title.trim(),
+        description: description.trim(),
+        status,
+        priority,
+        dueDate,
+        teamId: selectedTeamId,
+        teamName: selectedTeamName,
+        assigneeId: selectedAssigneeId,
+        assigneeName: selectedAssigneeName,
+      };
+
       if (isEditing && taskToEdit) {
-        const success = await onSubmitUpdate(taskToEdit.id, {
-          title: title.trim(),
-          description: description.trim(),
-          status,
-          priority,
-          dueDate,
-        });
+        const success = await onSubmitUpdate(taskToEdit.id, payload);
         if (success) onClose();
       } else {
-        const success = await onSubmitCreate({
-          title: title.trim(),
-          description: description.trim(),
-          status,
-          priority,
-          dueDate,
-        });
+        const success = await onSubmitCreate(payload);
         if (success) onClose();
       }
     } finally {
@@ -196,6 +238,136 @@ export const TaskModal: React.FC<TaskModalProps> = ({
                 textAlignVertical="top"
               />
             </View>
+
+            {/* TEAM SELECTION Field (Requirement 3) */}
+            <View style={styles.formGroup}>
+              <Text style={styles.inputLabel}>ASSIGN TO TEAM</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedTeamId(null);
+                    setSelectedTeamName(null);
+                    setSelectedAssigneeId(null);
+                    setSelectedAssigneeName(null);
+                  }}
+                  style={[
+                    styles.selectPillHorizontal,
+                    selectedTeamId === null && styles.selectPillActive,
+                  ]}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name="person-outline"
+                    size={12}
+                    color={selectedTeamId === null ? colors.primary : colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.selectPillText,
+                      selectedTeamId === null && styles.selectPillTextActive,
+                    ]}
+                  >
+                    Personal (No Team)
+                  </Text>
+                </TouchableOpacity>
+
+                {userTeams.map((t) => {
+                  const isSelected = selectedTeamId === t.id;
+                  return (
+                    <TouchableOpacity
+                      key={t.id}
+                      onPress={() => {
+                        setSelectedTeamId(t.id);
+                        setSelectedTeamName(t.name);
+                        // Reset assignee when switching teams
+                        setSelectedAssigneeId(null);
+                        setSelectedAssigneeName(null);
+                      }}
+                      style={[
+                        styles.selectPillHorizontal,
+                        isSelected && styles.selectPillActive,
+                      ]}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons
+                        name="people"
+                        size={12}
+                        color={isSelected ? colors.primary : colors.textSecondary}
+                      />
+                      <Text
+                        style={[
+                          styles.selectPillText,
+                          isSelected && styles.selectPillTextActive,
+                        ]}
+                      >
+                        {t.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+
+            {/* ASSIGNEE SELECTION Field (Requirement 3 - when a team is selected) */}
+            {Boolean(selectedTeamId) && (
+              <View style={styles.formGroup}>
+                <Text style={styles.inputLabel}>ASSIGNEE (TEAM MEMBER)</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedAssigneeId(null);
+                      setSelectedAssigneeName(null);
+                    }}
+                    style={[
+                      styles.selectPillHorizontal,
+                      selectedAssigneeId === null && styles.selectPillActive,
+                    ]}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={[
+                        styles.selectPillText,
+                        selectedAssigneeId === null && styles.selectPillTextActive,
+                      ]}
+                    >
+                      Unassigned
+                    </Text>
+                  </TouchableOpacity>
+
+                  {teamMembers.map((m) => {
+                    const isSelected = selectedAssigneeId === m.userId;
+                    return (
+                      <TouchableOpacity
+                        key={m.userId}
+                        onPress={() => {
+                          setSelectedAssigneeId(m.userId);
+                          setSelectedAssigneeName(m.userName || m.userEmail);
+                        }}
+                        style={[
+                          styles.selectPillHorizontal,
+                          isSelected && styles.selectPillActive,
+                        ]}
+                        activeOpacity={0.7}
+                      >
+                        <Ionicons
+                          name="person"
+                          size={12}
+                          color={isSelected ? colors.primary : colors.textSecondary}
+                        />
+                        <Text
+                          style={[
+                            styles.selectPillText,
+                            isSelected && styles.selectPillTextActive,
+                          ]}
+                        >
+                          {m.userName || m.userEmail}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            )}
 
             {/* STATUS Selector */}
             <View style={styles.formGroup}>
@@ -437,6 +609,22 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.danger,
     fontWeight: '600',
+  },
+  horizontalScroll: {
+    flexDirection: 'row',
+    marginVertical: 2,
+  },
+  selectPillHorizontal: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: '#F8FAFC',
+    marginRight: 6,
+    gap: 4,
   },
   optionRow: {
     flexDirection: 'row',

@@ -19,7 +19,6 @@ import { TaskModal } from '../components/TaskModal';
 import { DeleteConfirmModal } from '../components/DeleteConfirmModal';
 import { EmptyState } from '../components/EmptyState';
 import { Task } from '../types/task';
-import { colors, spacing } from '../theme';
 
 export const HomeScreen: React.FC = () => {
   const {
@@ -93,7 +92,7 @@ export const HomeScreen: React.FC = () => {
       {/* Error Banner if any */}
       {Boolean(error) && (
         <View style={styles.errorBanner}>
-          <Ionicons name="warning-outline" size={16} color={colors.danger} />
+          <Ionicons name="warning-outline" size={16} color="#DC2626" />
           <Text style={styles.errorBannerText}>{error}</Text>
         </View>
       )}
@@ -182,48 +181,48 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#F8FAFC',
   },
   listContent: {
-    paddingBottom: 90,
+    paddingBottom: 110,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: 12,
   },
   loadingText: {
-    color: colors.textSecondary,
+    color: '#64748B',
     fontSize: 13,
     fontWeight: '500',
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.dangerBg,
-    marginHorizontal: spacing.lg,
-    marginVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 8,
-    gap: spacing.xs,
+    backgroundColor: '#FEE2E2',
+    marginHorizontal: 20,
+    marginVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    gap: 8,
     borderWidth: 1,
-    borderColor: colors.dangerBorder,
+    borderColor: '#FECDD3',
   },
   errorBannerText: {
-    color: colors.dangerDark,
+    color: '#DC2626',
     fontSize: 12,
     fontWeight: '600',
     flex: 1,
   },
   fab: {
     position: 'absolute',
-    right: spacing.lg,
-    bottom: 20,
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    right: 20,
+    bottom: 24,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     backgroundColor: '#2563EB',
     justifyContent: 'center',
     alignItems: 'center',

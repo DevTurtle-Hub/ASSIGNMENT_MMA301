@@ -1,62 +1,107 @@
-# TaskFlow – Task Management Mobile App (React Native & Firebase Firestore)
+# TaskFlow – Task & Team Management Mobile App (React Native & Firebase)
 
-> **MMA301 – Practical Exam 1 Submission**  
-> Technical foundation of a mobile Task Management application built with **React Native (Expo)**, **TypeScript**, and **Cloud Firestore Database**.
-
----
-
-## 📱 Features
-
-- **Project Scaffolding**: Built using React Native with Expo (TypeScript template) with clean modular folder architecture (`src/components`, `src/screens`, `src/services`, `src/hooks`, `src/theme`, `src/types`, `src/utils`).
-- **Cloud Firestore Database**: Connected to Firebase Cloud Firestore for real-time document storage.
-- **Real-time Synchronization**: Uses Firestore `onSnapshot` listener to reactively update the UI when tasks are created, edited, or deleted across clients.
-- **Full Task CRUD**:
-  - **Create Task**: Interactive modal form with title, description, priority selector, status picker, and due date.
-  - **Read Tasks**: Categorized list with responsive cards, priority color bars, and status indicators.
-  - **Update Task**: Pre-filled modal form allowing updates to title, description, status, priority, and due dates.
-  - **Delete Task**: Safety confirmation dialog before permanent deletion.
-  - **Quick Status Toggle**: Tap status pill on any card to cycle between `To Do` -> `In Progress` -> `Completed`.
-- **Bonus Capabilities**:
-  - **Client-side Form Validation**: Real-time error messages (e.g. required title check).
-  - **Multi-criteria Filtering**: Filter by Status (`All`, `To Do`, `In Progress`, `Completed`), Priority (`High`, `Medium`, `Low`), and keyword search.
-  - **Pull-to-Refresh**: Native `RefreshControl` integration.
-  - **Placeholder Navigation**: Bottom Tab Navigator with `Home`, `Teams` (Practical Exam 2 preview), and `Profile` tabs.
-  - **CI/CD Pipeline**: GitHub Actions workflow (`.github/workflows/ci.yml`) validating ESLint and TypeScript on every commit.
+> **MMA301 – Practical Exam 2 Submission**  
+> Complete collaborative task management mobile application with **Firebase Authentication**, **Team Workspaces & Roles**, **Task Assignments**, and **Real-Time Team Chat** powered by **Cloud Firestore**.
 
 ---
 
-## 🗄️ Firestore Data Model & ERD Schema
+## 📱 Features (Practical Exam 2)
 
-Each task document is stored in the `tasks` Firestore collection:
+### 1. 🔐 Firebase Authentication & Protected Navigation
+- **Sign Up**: Full registration form (`name`, `email`, `password`, `confirmPassword`) creating a Firebase Auth user and a linked document in the `users` Firestore collection (`id`, `name`, `email`, `avatarUrl`, `createdAt`).
+- **Sign In**: Secure authentication via email & password with contextual validation and Firebase error handling.
+- **Persistent Auth**: Session persists across app restarts using `onAuthStateChanged` and `@react-native-async-storage/async-storage`.
+- **Auth-Aware Navigation**: Automatic routing between `AuthStack` (`Login`, `SignUp`) and `AppStack` (`Home`, `Teams`, `Profile`, `TeamDetail`, `Chat`).
+- **Profile & Logout**: Dedicated Profile screen showing user credentials, student metadata, and secure sign-out.
+
+### 2. 👥 Teams & Workspaces
+- **Create Teams**: Generate workspaces with name, description, and an auto-generated 6-character join code (e.g. `AB12CD`).
+- **Join Teams**: Join existing teams instantly by entering the 6-character team code.
+- **Team Detail Screen**:
+  - Displays team metadata and join code.
+  - Lists all team members with roles (`Owner` vs `Member`) and avatar initials.
+  - Lists tasks filtered for the team.
+  - Direct CTA button to launch the team's real-time chat.
+
+### 3. 📋 Tasks with Teams & Assignees
+- **Assign to Teams**: Select any of the user's teams or assign as Personal task.
+- **Assign to Members**: Dynamically loads team members in `TaskModal` for assigning to a specific teammate.
+- **Rich Task Cards**: Shows Priority pill, Status pill, Due date, **Team Name tag**, and **Assignee Name tag**.
+- **Real-time Task Synchronization**: Uses Firestore `onSnapshot` to sync updates instantly across devices.
+
+### 4. 💬 Real-Time Team Chat
+- **Per-team Subcollection**: Chat messages stored under `teams/{teamId}/messages`.
+- **Real-time `onSnapshot` Listener**: Automatically scrolls and reflects incoming messages without manual refresh.
+- **Visual Bubble Distinction**:
+  - Current user messages: Aligned right, Royal Blue background, white text.
+  - Other members: Aligned left, white card, sender name in cyan/purple, dark text.
+- **Message Timestamps**: Formatted timestamp per bubble.
+
+### 5. 🛡️ Firestore Security Rules
+- Production-ready security rules in `firestore.rules` enforcing `request.auth != null` for read/write on `users`, `teams`, `teamMembers`, `tasks`, and `messages`.
+
+---
+
+## 🗄️ Database Architecture & Complete ERD Schema
 
 ```mermaid
 erDiagram
+    USERS ||--o{ TEAM_MEMBERS : "joins"
+    TEAMS ||--o{ TEAM_MEMBERS : "contains"
+    TEAMS ||--o{ MESSAGES : "has"
+    USERS ||--o{ MESSAGES : "sends"
+    TEAMS ||--o{ TASKS : "owns"
+    USERS ||--o{ TASKS : "assigned to"
+
+    USERS {
+        string id PK "Firebase Auth UID"
+        string name "Full Name"
+        string email "User Email"
+        string avatarUrl "Profile image URL"
+        string createdAt "ISO 8601 Timestamp"
+    }
+
+    TEAMS {
+        string id PK "Firestore Auto ID"
+        string name "Team Name"
+        string description "Team Purpose / Scope"
+        string ownerId FK "Creator User UID"
+        string code "6-character join code"
+        string createdAt "ISO 8601 Timestamp"
+    }
+
+    TEAM_MEMBERS {
+        string id PK "Firestore Auto ID"
+        string teamId FK "Reference to TEAMS"
+        string userId FK "Reference to USERS"
+        string userName "Member Display Name"
+        string userEmail "Member Email"
+        string role "Enum: owner | member"
+        string joinedAt "ISO 8601 Timestamp"
+    }
+
     TASKS {
-        string id PK "Auto-generated Firestore Document ID"
-        string title "Required task title"
-        string description "Optional task details"
+        string id PK "Firestore Auto ID"
+        string title "Task Title"
+        string description "Task Details"
         string status "Enum: todo | in_progress | done"
         string priority "Enum: low | medium | high"
         string dueDate "ISO Date string (YYYY-MM-DD)"
         string createdAt "ISO 8601 Timestamp"
-        string teamId "Nullable / string (For Exam 2)"
-        string assigneeId "Nullable / string (For Exam 2)"
+        string teamId FK "Nullable team reference"
+        string teamName "Cached team name"
+        string assigneeId FK "Nullable assignee user UID"
+        string assigneeName "Cached assignee display name"
+    }
+
+    MESSAGES {
+        string id PK "Firestore Auto ID"
+        string senderId FK "Sender user UID"
+        string senderName "Sender display name"
+        string text "Message content"
+        string createdAt "ISO 8601 Timestamp"
     }
 ```
-
-### Document Fields Reference
-
-| Field | Type | Description | Required | Exam Stage |
-|---|---|---|---|---|
-| `id` | `string` | Auto-generated Firestore Document ID | Yes | Exam 1 |
-| `title` | `string` | Task title / summary | Yes | Exam 1 |
-| `description` | `string` | Detailed notes / task requirements | No | Exam 1 |
-| `status` | `'todo' \| 'in_progress' \| 'done'` | Current completion state | Yes | Exam 1 |
-| `priority` | `'low' \| 'medium' \| 'high'` | Priority level | Yes | Exam 1 |
-| `dueDate` | `string` | Due date string (`YYYY-MM-DD`) | Yes | Exam 1 |
-| `createdAt` | `string` | Creation ISO timestamp | Yes | Exam 1 |
-| `teamId` | `string \| null` | Team workspace reference | No | Exam 2 |
-| `assigneeId` | `string \| null` | Assigned member ID | No | Exam 2 |
 
 ---
 
@@ -64,126 +109,41 @@ erDiagram
 
 - **Framework**: [React Native](https://reactnative.dev/) (v0.86) with [Expo SDK 57](https://expo.dev/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict mode)
-- **Backend / Database**: [Firebase Cloud Firestore](https://firebase.google.com/docs/firestore)
-- **Navigation**: [@react-navigation/bottom-tabs](https://reactnavigation.org/)
-- **Icons**: [@expo/vector-icons (Ionicons)](https://icons.expo.fyi/)
+- **Backend / Database**: [Firebase Auth](https://firebase.google.com/docs/auth) & [Cloud Firestore](https://firebase.google.com/docs/firestore)
+- **Storage / Persistence**: `@react-native-async-storage/async-storage`
+- **Navigation**: `@react-navigation/native-stack` & `@react-navigation/bottom-tabs`
+- **Icons**: `@expo/vector-icons (Ionicons)`
 - **Code Quality**: ESLint v10 + Prettier + TypeScript Compiler (`tsc --noEmit`)
-- **CI / CD**: GitHub Actions
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Prerequisites
-- Node.js (v18+ or v20+ recommended)
-- npm or bun
-- Expo Go app on mobile device or Android/iOS emulator
-
-### 2. Installation
+### 1. Installation
 ```bash
 # Clone the repository
 git clone <YOUR_GITHUB_REPO_URL>
-cd TaskManagementApp
+cd MMA301
 
 # Install dependencies
 npm install
 ```
 
-### 3. Firebase Configuration
-1. Create a Firebase Project at [Firebase Console](https://console.firebase.google.com/).
-2. Create a Cloud Firestore database in **Test Mode**.
-3. Register a Web App in Firebase Project Settings to obtain your API configuration keys.
-4. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-5. Fill in your Firebase keys in `.env`:
-   ```env
-   EXPO_PUBLIC_FIREBASE_API_KEY=AIzaSy...
-   EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your-app.firebaseapp.com
-   EXPO_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-   EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your-app.appspot.com
-   EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
-   EXPO_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:...
-   ```
-*(Note: If `.env` is omitted, the app automatically runs in graceful demo in-memory storage mode without crashing).*
-
-### 4. Running the Application
+### 2. Running Locally
 ```bash
-# Start Metro bundler
-npx expo start
+# Start on Android Emulator
+npm run android
 
-# Run on Web directly
-npx expo start --web
-
-# Run on Android Emulator
-npx expo start --android
-
-# Run on iOS Simulator
-npx expo start --ios
+# Or start Metro bundler
+npm start
 ```
 
-### 5. Quality Checks
+### 3. Type Checking
 ```bash
-# Check TypeScript types
 npm run typecheck
-
-# Run ESLint
-npm run lint
-
-# Format code
-npm run format
 ```
 
 ---
 
-## 📂 Project Structure
-
-```
-├── .github/
-│   └── workflows/
-│       └── ci.yml               # GitHub Actions CI pipeline
-├── assets/                      # Application icons & splash assets
-├── src/
-│   ├── components/
-│   │   ├── DeleteConfirmModal.tsx # Task deletion confirmation dialog
-│   │   ├── EmptyState.tsx       # Zero-state illustration and action
-│   │   ├── FilterBar.tsx        # Search input and status/priority filter chips
-│   │   ├── Header.tsx           # Branding, subtitle, and live stats overview
-│   │   ├── TaskCard.tsx         # Task item card with actions & status toggle
-│   │   └── TaskModal.tsx        # Create/Edit Task form modal with validation
-│   ├── hooks/
-│   │   └── useTasks.ts          # State management & Firestore real-time hook
-│   ├── navigation/
-│   │   └── AppNavigator.tsx     # Bottom tab navigation (Home, Teams, Profile)
-│   ├── screens/
-│   │   ├── HomeScreen.tsx       # Main Task management screen
-│   │   ├── ProfileScreen.tsx    # User profile placeholder screen
-│   │   └── TeamsScreen.tsx      # Teams & collaboration placeholder screen
-│   ├── services/
-│   │   ├── firebase.ts          # Firebase SDK & Firestore initialization
-│   │   ├── firebaseConfig.example.ts # Example config file
-│   │   └── taskService.ts       # Firestore CRUD logic (subscribe, add, update, delete)
-│   ├── theme/
-│   │   ├── colors.ts            # Design system palette
-│   │   ├── index.ts             # Theme exports
-│   │   ├── spacing.ts           # Spacing, border radius & elevation
-│   │   └── typography.ts        # Typography tokens
-│   ├── types/
-│   │   └── task.ts              # TypeScript interfaces & types
-│   └── utils/
-│       └── dateUtils.ts         # Date formatting & overdue calculation helpers
-├── .env.example                 # Environment variables template
-├── .gitignore                   # Ignored files (node_modules, .env, .expo)
-├── .prettierrc                  # Prettier code formatting rules
-├── App.tsx                      # Root component with NavigationContainer
-├── app.json                     # Expo configuration
-├── eslint.config.mjs            # ESLint flat configuration
-├── package.json                 # Project dependencies & scripts
-└── tsconfig.json                # TypeScript compiler configuration
-```
-
----
-
-## 📝 License
-This project is prepared for MMA301 Practical Exam 1.
+## 📝 Firestore Security Rules Setup
+Copy the contents of [firestore.rules](file:///d:/MMA301/firestore.rules) into your Firebase Console -> Firestore Database -> Rules tab and click **Publish**.

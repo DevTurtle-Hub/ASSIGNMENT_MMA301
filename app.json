@@ -10,9 +10,11 @@
       "backgroundColor": "#4F46E5"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mma301.taskmanagementapp"
     },
     "android": {
+      "package": "com.mma301.taskmanagementapp",
       "adaptiveIcon": {
         "backgroundColor": "#4F46E5",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -23,6 +25,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e3458b13-6cf6-4bda-9bd8-d3c012522a39"
+      }
     }
   }
 }

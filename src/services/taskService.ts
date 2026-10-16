@@ -7,6 +7,7 @@ import {
   getDocs,
   onSnapshot,
   query,
+  where,
   orderBy,
   Unsubscribe,
   Timestamp,
@@ -47,6 +48,8 @@ export const subscribeTasks = (
                 : data.createdAt || new Date().toISOString(),
             teamId: data.teamId ?? null,
             assigneeId: data.assigneeId ?? null,
+            teamName: data.teamName ?? null,
+            assigneeName: data.assigneeName ?? null,
           });
         });
         onNext(tasks);
@@ -66,6 +69,62 @@ export const subscribeTasks = (
 };
 
 /**
+ * Subscribes to tasks belonging to a specific team
+ */
+export const subscribeTeamTasks = (
+  teamId: string,
+  onNext: (tasks: Task[]) => void,
+  onError?: (error: Error) => void
+): Unsubscribe => {
+  try {
+    const tasksRef = collection(db, COLLECTION_NAME);
+    // Note: To avoid requiring a composite index in Firestore (where + orderBy),
+    // we query by teamId and sort by createdAt descending in memory.
+    const q = query(
+      tasksRef,
+      where('teamId', '==', teamId)
+    );
+
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        const tasks: Task[] = snapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            title: data.title || '',
+            description: data.description || '',
+            status: data.status || 'todo',
+            priority: data.priority || 'medium',
+            dueDate: data.dueDate || '',
+            createdAt:
+              data.createdAt instanceof Timestamp
+                ? data.createdAt.toDate().toISOString()
+                : data.createdAt || new Date().toISOString(),
+            teamId: data.teamId ?? null,
+            assigneeId: data.assigneeId ?? null,
+            teamName: data.teamName ?? null,
+            assigneeName: data.assigneeName ?? null,
+          };
+        });
+        tasks.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        onNext(tasks);
+      },
+      (err) => {
+        console.error('[taskService] subscribeTeamTasks error:', err);
+        if (onError) onError(err);
+      }
+    );
+  } catch (err: any) {
+    console.error('[taskService] Exception in subscribeTeamTasks:', err);
+    if (onError) onError(err);
+    return () => {};
+  }
+};
+
+/**
  * Creates a new task directly in Cloud Firestore.
  */
 export const createTask = async (input: CreateTaskInput): Promise<Task> => {
@@ -79,6 +138,8 @@ export const createTask = async (input: CreateTaskInput): Promise<Task> => {
     createdAt: input.createdAt || nowIso,
     teamId: input.teamId ?? null,
     assigneeId: input.assigneeId ?? null,
+    teamName: input.teamName ?? null,
+    assigneeName: input.assigneeName ?? null,
   };
 
   try {

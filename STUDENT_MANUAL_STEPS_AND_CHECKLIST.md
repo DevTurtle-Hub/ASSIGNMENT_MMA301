@@ -9,7 +9,8 @@ Tài liệu này tổng hợp toàn bộ các bước thao tác tay (manual step
 2. [Bước 2: Cấu hình biến môi trường `.env`](#bước-2-cấu-hình-biến-môi-trường-env)
 3. [Bước 3: Tạo Repo GitHub & Push Code](#bước-3-tạo-repo-github--push-code)
 4. [Bước 4: Chạy App & Chụp 11 Ảnh Minh Chứng](#bước-4-chạy-app--chụp-11-ảnh-minh-chứng)
-5. [Bước 5: Tạo File Nộp Bài `StudentID_Exam1.docx`](#bước-5-tạo-file-nộp-bài-studentid_exam1docx)
+5. [Bước 5: Build File APK & Lấy Link Tải / Mã QR (EAS Build)](#bước-5-build-file-apk--lấy-link-tải--mã-qr-eas-build)
+6. [Bước 6: Tạo File Nộp Bài `StudentID_Exam1.docx`](#bước-6-tạo-file-nộp-bài-studentid_exam1docx)
 
 ---
 
@@ -105,12 +106,45 @@ Chụp đầy đủ **11 ảnh màn hình rõ nét** (Full screen, không cắt 
 
 ---
 
-## 📌 BƯỚC 5: TẠO FILE NỘP BÀI `StudentID_Exam1.docx`
+## 📌 BƯỚC 5: BUILD FILE APK & LẤY LINK TẢI / MÃ QR (EAS BUILD)
+
+Để tạo link tải và mã QR cho người dùng (hoặc giảng viên chấm bài) tải app trực tiếp về điện thoại Android cài đặt:
+
+1. **Đăng nhập Expo trên Terminal**:
+   - Nếu chưa có tài khoản, đăng ký tại [expo.dev/signup](https://expo.dev/signup).
+   - Chạy lệnh:
+     ```bash
+     npx eas-cli login
+     ```
+   - Nhập Username/Email và Password của tài khoản Expo.
+
+2. **Chạy lệnh Build APK**:
+   ```bash
+   npm run build:apk
+   ```
+   *(hoặc chạy `npx eas-cli build -p android --profile preview`)*
+
+3. **Xử lý các câu hỏi tương tác từ EAS CLI**:
+   - Nếu hỏi: *`Would you like to automatically create an EAS project...?`* -> Chọn **Yes** (Enter).
+   - Nếu hỏi: *`Generate a new Android Keystore?`* -> Chọn **Yes** (Enter - Expo sẽ tự quản lý keystore an toàn trên cloud).
+
+4. **Nhận kết quả và link tải**:
+   - Quá trình build chạy trên cloud Expo (khoảng 10-15 phút).
+   - Sau khi hoàn thành, terminal sẽ in ra:
+     - **Mã QR Code**: Quét để tải ngay trên điện thoại.
+     - **Link APK Artifact**: Dạng `https://expo.dev/artifacts/eas/...apk`.
+     - **Install Page Link**: Dạng `https://expo.dev/accounts/.../builds/...`.
+   - Copy đường link này để dán vào file báo cáo nộp bài.
+
+---
+
+## 📌 BƯỚC 6: TẠO FILE NỘP BÀI `StudentID_Exam1.docx`
 
 1. Đổi tên file báo cáo theo đúng định dạng: `MãSinhViên_Exam1.docx` (Ví dụ: `QE170123_Exam1.docx` hoặc `SE160999_Exam1.docx`).
 2. Mở file mẫu báo cáo `StudentID_Exam1_Report_Template.md` đã được tạo sẵn trong dự án.
 3. Chèn các đường link:
-   - Link GitHub Repository Public.
-   - Link Expo QR / Snack / APK.
+   - Link GitHub Repository Public (từ Bước 3).
+   - Link Expo APK / Install Page / QR Code (từ Bước 5).
 4. Chèn 11 ảnh đã chụp ở Bước 4 vào các mục tương ứng và ghi kèm chú thích ngắn gọn (Captions).
 5. Lưu file thành định dạng `.docx` và nộp lên hệ thống quản lý học tập (LMS / Edunext) trước hạn chót.
+

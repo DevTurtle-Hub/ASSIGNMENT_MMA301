@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Task, TaskPriority, TaskStatus } from '../types/task';
-import { colors, spacing, borderRadius, shadows } from '../theme';
 import { formatDate, isOverdue } from '../utils/dateUtils';
 
 interface TaskCardProps {
@@ -21,156 +20,175 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const isTaskOverdue = isOverdue(task.dueDate) && task.status !== 'done';
   const isDone = task.status === 'done';
 
-  // Harmonious priority styling
-  const getPriorityConfig = (priority: TaskPriority) => {
+  const getPriorityLabel = (priority: TaskPriority) => {
     switch (priority) {
       case 'high':
-        return {
-          label: 'HIGH',
-          color: '#E11D48',
-          bg: '#FFF1F2',
-          border: '#FFE4E6',
-        };
+        return 'High';
       case 'medium':
-        return {
-          label: 'MEDIUM',
-          color: '#D97706',
-          bg: '#FFFBEB',
-          border: '#FEF3C7',
-        };
+        return 'Medium';
       case 'low':
       default:
-        return {
-          label: 'LOW',
-          color: '#0284C7',
-          bg: '#F0F9FF',
-          border: '#E0F2FE',
-        };
+        return 'Low';
     }
   };
 
-  // Harmonious status styling
   const getStatusConfig = (status: TaskStatus) => {
     switch (status) {
       case 'done':
         return {
-          label: 'Done',
+          label: 'Completed',
           color: '#16A34A',
           bg: '#F0FDF4',
-          border: '#DCFCE7',
-          icon: 'checkmark-circle' as const,
+          border: '#BBF7D0',
+          iconName: 'checkmark-circle' as const,
         };
       case 'in_progress':
         return {
-          label: 'In Prog',
-          color: '#2563EB',
+          label: 'In Progress',
+          color: '#2563EB', // Primary app color
           bg: '#EFF6FF',
           border: '#BFDBFE',
-          icon: 'time' as const,
+          iconName: 'time' as const,
         };
       case 'todo':
       default:
         return {
           label: 'To Do',
-          color: '#64748B',
+          color: '#475569',
           bg: '#F8FAFC',
           border: '#E2E8F0',
-          icon: 'ellipse-outline' as const,
+          iconName: 'ellipse-outline' as const,
         };
     }
   };
 
-  const priorityConfig = getPriorityConfig(task.priority);
   const statusConfig = getStatusConfig(task.status);
 
   return (
-    <View style={[styles.card, isDone && styles.cardDone]}>
-      {/* Left Color Accent Stripe: Synchronized with the app's primary brand color */}
-      <View style={styles.accentStripe} />
-
-      <View style={styles.cardContent}>
-        {/* Top Header Row: Priority + Status Pill */}
-        <View style={styles.topRow}>
-          {/* Priority Pill */}
-          <View
-            style={[
-              styles.priorityPill,
-              {
-                backgroundColor: priorityConfig.bg,
-                borderColor: priorityConfig.border,
-              },
-            ]}
-          >
-            <Text style={[styles.priorityPillText, { color: priorityConfig.color }]}>
-              {priorityConfig.label}
-            </Text>
-          </View>
-
-          {/* Interactive Status Pill */}
-          <TouchableOpacity
-            onPress={() => onToggleStatus(task)}
-            style={[
-              styles.statusPill,
-              {
-                backgroundColor: statusConfig.bg,
-                borderColor: statusConfig.border,
-              },
-            ]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name={statusConfig.icon} size={12} color={statusConfig.color} />
-            <Text style={[styles.statusPillText, { color: statusConfig.color }]}>
-              {statusConfig.label}
-            </Text>
-          </TouchableOpacity>
+    <View
+      style={[
+        styles.card,
+        isDone ? styles.cardDone : styles.cardActive,
+      ]}
+    >
+      {/* Header Row: Title & Primary App-colored Status Pill */}
+      <View style={styles.headerRow}>
+        <View style={styles.titleWrap}>
+          <Text style={[styles.title, isDone && styles.titleDone]} numberOfLines={2}>
+            {task.title}
+          </Text>
         </View>
 
-        {/* Task Title */}
-        <Text style={[styles.title, isDone && styles.titleDone]} numberOfLines={2}>
-          {task.title}
-        </Text>
-
-        {/* Task Description */}
-        {Boolean(task.description) && (
-          <Text style={[styles.description, isDone && styles.descriptionDone]} numberOfLines={2}>
-            {task.description}
+        {/* Interactive Status Pill */}
+        <TouchableOpacity
+          onPress={() => onToggleStatus(task)}
+          style={[
+            styles.statusPill,
+            { backgroundColor: statusConfig.bg, borderColor: statusConfig.border },
+          ]}
+          activeOpacity={0.7}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons name={statusConfig.iconName} size={13} color={statusConfig.color} />
+          <Text style={[styles.statusPillText, { color: statusConfig.color }]}>
+            {statusConfig.label}
           </Text>
-        )}
+        </TouchableOpacity>
+      </View>
 
-        {/* Bottom Meta Row */}
-        <View style={styles.bottomRow}>
-          {/* Due Date */}
-          <View style={styles.dueDateBadge}>
-            <Ionicons
-              name={isTaskOverdue ? 'warning' : 'calendar-outline'}
-              size={12}
-              color={isTaskOverdue ? colors.danger : colors.textMuted}
-            />
-            <Text style={[styles.dueDateText, isTaskOverdue && styles.dueDateOverdue]}>
-              {isTaskOverdue ? `Overdue: ${formatDate(task.dueDate)}` : formatDate(task.dueDate)}
+      {/* Description */}
+      {Boolean(task.description) && (
+        <Text style={[styles.description, isDone && styles.descriptionDone]} numberOfLines={2}>
+          {task.description}
+        </Text>
+      )}
+
+      {/* Metadata Badges in Primary & Slate Tones */}
+      <View style={styles.badgeRow}>
+        {/* Priority Badge */}
+        <View style={styles.badge}>
+          <View
+            style={[
+              styles.priorityDot,
+              task.priority === 'high' ? styles.dotHigh : task.priority === 'medium' ? styles.dotMedium : styles.dotLow,
+            ]}
+          />
+          <Text style={styles.badgeText}>
+            {getPriorityLabel(task.priority)}
+          </Text>
+        </View>
+
+        {/* Due Date Badge */}
+        <View
+          style={[
+            styles.badge,
+            isTaskOverdue && styles.badgeOverdue,
+          ]}
+        >
+          <Ionicons
+            name={isTaskOverdue ? 'alert-circle' : 'calendar-outline'}
+            size={12}
+            color={isTaskOverdue ? '#DC2626' : '#2563EB'}
+          />
+          <Text
+            style={[
+              styles.badgeText,
+              isTaskOverdue && styles.badgeTextOverdue,
+            ]}
+          >
+            {isTaskOverdue ? `Overdue: ${formatDate(task.dueDate)}` : formatDate(task.dueDate)}
+          </Text>
+        </View>
+
+        {/* Team Tag (Primary Blue) */}
+        {Boolean(task.teamName) && (
+          <View style={[styles.badge, styles.badgeTeam]}>
+            <Ionicons name="people" size={12} color="#2563EB" />
+            <Text style={styles.badgeTextTeam} numberOfLines={1}>
+              {task.teamName}
             </Text>
           </View>
+        )}
 
-          {/* Action Buttons */}
-          <View style={styles.actions}>
-            <TouchableOpacity
-              onPress={() => onEdit(task)}
-              style={styles.miniBtn}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="create-outline" size={15} color="#2563EB" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => onDelete(task)}
-              style={[styles.miniBtn, styles.miniBtnDelete]}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="trash-outline" size={15} color="#EF4444" />
-            </TouchableOpacity>
+        {/* Assignee Tag */}
+        {Boolean(task.assigneeName) && (
+          <View style={styles.badge}>
+            <Ionicons name="person-outline" size={11} color="#64748B" />
+            <Text style={styles.badgeText} numberOfLines={1}>
+              {task.assigneeName}
+            </Text>
           </View>
+        )}
+      </View>
+
+      {/* Divider */}
+      <View style={styles.divider} />
+
+      {/* Footer: Quick status note & Action buttons */}
+      <View style={styles.footerRow}>
+        <Text style={styles.footerNote}>
+          {isDone ? '✓ Completed' : task.status === 'in_progress' ? '⚡ In progress' : 'Tap status to change'}
+        </Text>
+
+        <View style={styles.actionGroup}>
+          <TouchableOpacity
+            onPress={() => onEdit(task)}
+            style={styles.btnEdit}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="pencil-sharp" size={12} color="#2563EB" />
+            <Text style={styles.btnEditText}>Edit</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => onDelete(task)}
+            style={styles.btnDelete}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="trash-outline" size={13} color="#94A3B8" />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -180,114 +198,171 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: borderRadius.md,
-    marginHorizontal: spacing.md + 2,
-    marginBottom: spacing.sm + 2,
-    flexDirection: 'row',
-    overflow: 'hidden',
+    borderRadius: 16,
+    marginHorizontal: 20,
+    marginBottom: 12,
+    paddingTop: 14,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: colors.border,
-    ...shadows.sm,
+    borderColor: '#E2E8F0',
+    borderLeftWidth: 4,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  cardActive: {
+    borderLeftColor: '#2563EB', // Primary Brand Royal Blue
   },
   cardDone: {
     backgroundColor: '#F8FAFC',
-    opacity: 0.85,
+    borderLeftColor: '#CBD5E1',
+    opacity: 0.82,
   },
-  accentStripe: {
-    width: 4,
-    backgroundColor: colors.cyan,
-  },
-  cardContent: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-  topRow: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
+    alignItems: 'flex-start',
+    gap: 10,
+    marginBottom: 6,
   },
-  priorityPill: {
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: borderRadius.xs,
-    borderWidth: 1,
+  titleWrap: {
+    flex: 1,
   },
-  priorityPillText: {
-    fontSize: 9.5,
+  title: {
+    fontSize: 16,
     fontWeight: '700',
-    letterSpacing: 0.3,
+    color: '#0F172A',
+    lineHeight: 22,
+    letterSpacing: -0.2,
+  },
+  titleDone: {
+    textDecorationLine: 'line-through',
+    color: '#94A3B8',
   },
   statusPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: borderRadius.full,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 14,
     borderWidth: 1,
-    gap: 3.5,
+    gap: 4,
   },
   statusPillText: {
-    fontSize: 10.5,
+    fontSize: 11,
     fontWeight: '700',
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    lineHeight: 19,
-    marginTop: 2,
-    marginBottom: 2,
-  },
-  titleDone: {
-    textDecorationLine: 'line-through',
-    color: colors.textMuted,
+    letterSpacing: 0.2,
   },
   description: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    lineHeight: 16,
-    marginBottom: 6,
+    fontSize: 13.5,
+    color: '#334155',
+    lineHeight: 19,
+    marginBottom: 10,
   },
   descriptionDone: {
-    color: colors.textMuted,
+    color: '#94A3B8',
   },
-  bottomRow: {
+  badgeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 2,
+    marginBottom: 10,
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 7,
+    borderWidth: 1,
+    backgroundColor: '#F8FAFC',
+    borderColor: '#E2E8F0',
+    gap: 4,
+  },
+  priorityDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  dotHigh: {
+    backgroundColor: '#EF4444',
+  },
+  dotMedium: {
+    backgroundColor: '#F59E0B',
+  },
+  dotLow: {
+    backgroundColor: '#64748B',
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  badgeOverdue: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECDD3',
+  },
+  badgeTextOverdue: {
+    color: '#DC2626',
+    fontWeight: '700',
+  },
+  badgeTeam: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
+  },
+  badgeTextTeam: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#2563EB', // Primary Brand Royal Blue
+    maxWidth: 100,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+    marginBottom: 8,
+  },
+  footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 4,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderSubtle,
   },
-  dueDateBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  dueDateText: {
+  footerNote: {
     fontSize: 11,
-    color: colors.textSecondary,
+    color: '#94A3B8',
     fontWeight: '500',
   },
-  dueDateOverdue: {
-    color: colors.danger,
-    fontWeight: '700',
-  },
-  actions: {
+  actionGroup: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
-  miniBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: borderRadius.sm,
-    backgroundColor: '#F1F5F9',
-    justifyContent: 'center',
+  btnEdit: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 7,
+    gap: 4,
   },
-  miniBtnDelete: {
-    backgroundColor: '#FEF2F2',
+  btnEditText: {
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#2563EB', // Primary Brand Royal Blue
+  },
+  btnDelete: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 7,
   },
 });

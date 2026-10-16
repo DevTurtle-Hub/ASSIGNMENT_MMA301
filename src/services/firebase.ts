@@ -1,5 +1,8 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { initializeFirestore, getFirestore, Firestore } from 'firebase/firestore';
+// @ts-expect-error getReactNativePersistence exists in React Native entrypoint of firebase/auth
+import { initializeAuth, getReactNativePersistence, getAuth, Auth } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || 'AIzaSyCcAvBbzM7acMETRErP37ss8sf0F187o3I',
@@ -14,6 +17,7 @@ export const isFirebaseConfigured = (): boolean => true;
 
 export const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
+// Initialize Firestore
 let firestoreDb: Firestore;
 try {
   firestoreDb = initializeFirestore(app, {
@@ -24,3 +28,15 @@ try {
 }
 
 export const db: Firestore = firestoreDb;
+
+// Initialize Firebase Auth with persistent AsyncStorage
+let authInstance: Auth;
+try {
+  authInstance = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+} catch {
+  authInstance = getAuth(app);
+}
+
+export const auth: Auth = authInstance;

@@ -15,7 +15,8 @@
 
 ### 🔗 PROJECT & REPOSITORY LINKS
 - **Public GitHub Repository**: `https://github.com/DevTurtle-Hub/ASSIGNMENT_MMA301`
-- **Expo Project Link / QR Code / APK Download**: `https://expo.dev/@[YOUR_EXPO_USERNAME]/[YOUR_PROJECT_NAME]`
+- **Direct APK Download Link**: `https://expo.dev/artifacts/eas/V3rynPW28sv3r11kfLK0B899xulyOeWKY2aDY4FDpeE.apk`
+- **Expo Build Page**: `https://expo.dev/accounts/quynv64/projects/task-management-app/builds/4735525b-ae79-4fcb-a46e-52221f2f2921`
 
 ---
 

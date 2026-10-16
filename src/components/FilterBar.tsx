@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  Modal,
   StyleSheet,
+  Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, borderRadius } from '../theme';
 import { TaskFilterStatus, TaskFilterPriority, TaskStats } from '../types/task';
 
 interface FilterBarProps {
@@ -30,235 +30,409 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onPriorityChange,
   stats,
 }) => {
-  const statusOptions: { label: string; value: TaskFilterStatus }[] = [
-    { label: 'All', value: 'all' },
-    { label: 'Todo', value: 'todo' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'Done', value: 'done' },
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+
+  const statusOptions: { label: string; value: TaskFilterStatus; count: number }[] = [
+    { label: 'All', value: 'all', count: stats.total },
+    { label: 'To Do', value: 'todo', count: stats.todo },
+    { label: 'In Progress', value: 'in_progress', count: stats.inProgress },
+    { label: 'Done', value: 'done', count: stats.done },
   ];
 
-  const priorityOptions: { label: string; value: TaskFilterPriority; color: string }[] = [
-    { label: 'All', value: 'all', color: colors.textSecondary },
-    { label: 'High', value: 'high', color: colors.priorityHigh },
-    { label: 'Medium', value: 'medium', color: colors.priorityMedium },
-    { label: 'Low', value: 'low', color: colors.priorityLow },
+  const priorityOptions: {
+    label: string;
+    value: TaskFilterPriority;
+    color: string;
+    bg: string;
+    sublabel: string;
+  }[] = [
+    {
+      label: 'All Priorities',
+      value: 'all',
+      color: '#64748B',
+      bg: '#F8FAFC',
+      sublabel: 'Show all tasks regardless of priority',
+    },
+    {
+      label: 'High Priority',
+      value: 'high',
+      color: '#DC2626',
+      bg: '#FEF2F2',
+      sublabel: 'Urgent & critical team tasks',
+    },
+    {
+      label: 'Medium Priority',
+      value: 'medium',
+      color: '#D97706',
+      bg: '#FFFBEB',
+      sublabel: 'Regular scheduled work',
+    },
+    {
+      label: 'Low Priority',
+      value: 'low',
+      color: '#64748B',
+      bg: '#F1F5F9',
+      sublabel: 'Minor items & backlog',
+    },
   ];
+
+  const isPriorityFiltered = priorityFilter !== 'all';
 
   return (
     <View style={styles.container}>
-      {/* Search Input */}
-      <View style={styles.searchBar}>
-        <Ionicons name="search" size={15} color={colors.primary} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search tasks..."
-          placeholderTextColor={colors.textMuted}
-          value={searchQuery}
-          onChangeText={onSearchChange}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        {Boolean(searchQuery) && (
-          <TouchableOpacity
-            onPress={() => onSearchChange('')}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            style={styles.clearBtn}
-          >
-            <Ionicons name="close-circle" size={15} color={colors.textMuted} />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Tasks Title + Status Filter Tabs (Matching Reference Image) */}
-      <View style={styles.tasksFilterRow}>
-        <View style={styles.tasksTitleGroup}>
-          <Text style={styles.tasksHeading}>Tasks</Text>
-          <View style={styles.tasksCountBadge}>
-            <Text style={styles.tasksCountText}>{stats.total}</Text>
-          </View>
+      {/* Search Input Row with Compact Filter Button */}
+      <View style={styles.searchRow}>
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={16} color="#94A3B8" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search tasks..."
+            placeholderTextColor="#94A3B8"
+            value={searchQuery}
+            onChangeText={onSearchChange}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {Boolean(searchQuery) && (
+            <TouchableOpacity
+              onPress={() => onSearchChange('')}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              style={styles.clearBtn}
+            >
+              <Ionicons name="close-circle" size={16} color="#94A3B8" />
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Filter Pills */}
-        <View style={styles.pillTabs}>
-          {statusOptions.map((item) => {
-            const isSelected = statusFilter === item.value;
-            return (
-              <TouchableOpacity
-                key={item.value}
-                onPress={() => onStatusChange(item.value)}
-                style={[
-                  styles.filterPill,
-                  isSelected && styles.filterPillActive,
-                ]}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.filterPillText,
-                    isSelected && styles.filterPillTextActive,
-                  ]}
-                >
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        {/* Compact Filter Button */}
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            isPriorityFiltered && styles.filterButtonActive,
+          ]}
+          onPress={() => setFilterModalVisible(true)}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name={isPriorityFiltered ? 'funnel' : 'funnel-outline'}
+            size={16}
+            color={isPriorityFiltered ? '#2563EB' : '#475569'}
+          />
+          {isPriorityFiltered && <View style={styles.filterActiveDot} />}
+        </TouchableOpacity>
       </View>
 
-      {/* Priority Chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.priorityRow}
-      >
-        <Text style={styles.priorityPrefix}>Priority:</Text>
-        {priorityOptions.map((item) => {
-          const isSelected = priorityFilter === item.value;
+      {/* Status Segmented Tabs */}
+      <View style={styles.segmentedContainer}>
+        {statusOptions.map((item) => {
+          const isSelected = statusFilter === item.value;
           return (
             <TouchableOpacity
               key={item.value}
-              onPress={() => onPriorityChange(item.value)}
+              onPress={() => onStatusChange(item.value)}
               style={[
-                styles.priorityChip,
-                isSelected && styles.priorityChipActive,
+                styles.segmentItem,
+                isSelected && styles.segmentItemActive,
               ]}
               activeOpacity={0.7}
             >
-              {item.value !== 'all' && (
-                <View style={[styles.priorityDot, { backgroundColor: item.color }]} />
-              )}
               <Text
                 style={[
-                  styles.priorityText,
-                  isSelected && styles.priorityTextActive,
+                  styles.segmentText,
+                  isSelected && styles.segmentTextActive,
                 ]}
               >
                 {item.label}
               </Text>
+              <View
+                style={[
+                  styles.countPill,
+                  isSelected && styles.countPillActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.countPillText,
+                    isSelected && styles.countPillTextActive,
+                  ]}
+                >
+                  {item.count}
+                </Text>
+              </View>
             </TouchableOpacity>
           );
         })}
-      </ScrollView>
+      </View>
+
+      {/* Filter Bottom Sheet / Modal */}
+      <Modal
+        visible={filterModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setFilterModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setFilterModalVisible(false)}
+        >
+          <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHeaderLeft}>
+                <Ionicons name="funnel" size={18} color="#2563EB" />
+                <Text style={styles.modalTitle}>Filter by Priority</Text>
+              </View>
+              {isPriorityFiltered && (
+                <TouchableOpacity
+                  onPress={() => {
+                    onPriorityChange('all');
+                    setFilterModalVisible(false);
+                  }}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Text style={styles.resetText}>Reset</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Options List */}
+            <View style={styles.optionsList}>
+              {priorityOptions.map((opt) => {
+                const isSelected = priorityFilter === opt.value;
+                return (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.optionItem,
+                      isSelected && styles.optionItemActive,
+                    ]}
+                    onPress={() => {
+                      onPriorityChange(opt.value);
+                      setFilterModalVisible(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <View style={[styles.optionDot, { backgroundColor: opt.color }]} />
+                    <View style={styles.optionTextWrap}>
+                      <Text
+                        style={[
+                          styles.optionLabel,
+                          isSelected && styles.optionLabelActive,
+                        ]}
+                      >
+                        {opt.label}
+                      </Text>
+                      <Text style={styles.optionSublabel}>{opt.sublabel}</Text>
+                    </View>
+                    {isSelected && (
+                      <Ionicons name="checkmark-circle" size={18} color="#2563EB" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: spacing.md + 2,
-    paddingTop: spacing.sm,
-    paddingBottom: 4,
-    backgroundColor: colors.background,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 8,
+    backgroundColor: '#F8FAFC',
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
   },
   searchBar: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    marginBottom: spacing.sm,
-    paddingHorizontal: 10,
-    borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border,
-    height: 38,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 42,
   },
   searchIcon: {
-    marginRight: 6,
+    marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    color: colors.textPrimary,
-    fontSize: 13,
+    fontSize: 14,
+    color: '#0F172A',
     paddingVertical: 0,
   },
   clearBtn: {
-    padding: 2,
+    padding: 4,
   },
-  tasksFilterRow: {
+  filterButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  filterButtonActive: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#2563EB',
+  },
+  filterActiveDot: {
+    position: 'absolute',
+    top: 9,
+    right: 9,
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: '#2563EB',
+  },
+  segmentedContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  segmentItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 7,
+    paddingHorizontal: 4,
+    borderRadius: 9,
+    gap: 4,
+  },
+  segmentItemActive: {
+    backgroundColor: '#2563EB',
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  segmentText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  segmentTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  countPill: {
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 8,
+    minWidth: 16,
+    alignItems: 'center',
+  },
+  countPillActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+  },
+  countPillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  countPillTextActive: {
+    color: '#FFFFFF',
+  },
+  // Modal Bottom Sheet Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 18,
+    paddingHorizontal: 20,
+    paddingBottom: 32,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.xs + 2,
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
   },
-  tasksTitleGroup: {
+  modalHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
-  tasksHeading: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.textPrimary,
-    letterSpacing: -0.3,
-  },
-  tasksCountBadge: {
-    backgroundColor: '#EFF6FF',
-    paddingHorizontal: 7,
-    paddingVertical: 1,
-    borderRadius: borderRadius.full,
-  },
-  tasksCountText: {
-    fontSize: 11,
+  modalTitle: {
+    fontSize: 16,
     fontWeight: '700',
-    color: '#2563EB',
+    color: '#0F172A',
   },
-  pillTabs: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F1F5F9',
-    borderRadius: borderRadius.full,
-    padding: 2,
-  },
-  filterPill: {
-    paddingVertical: 4,
-    paddingHorizontal: 9,
-    borderRadius: borderRadius.full,
-  },
-  filterPillActive: {
-    backgroundColor: '#2563EB',
-  },
-  filterPillText: {
-    fontSize: 11,
+  resetText: {
+    fontSize: 13,
     fontWeight: '600',
-    color: colors.textSecondary,
+    color: '#DC2626',
   },
-  filterPillTextActive: {
-    color: '#FFFFFF',
+  optionsList: {
+    gap: 8,
   },
-  priorityRow: {
+  optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    paddingBottom: 2,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 12,
   },
-  priorityPrefix: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.textMuted,
-    marginRight: 2,
-  },
-  priorityChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 3,
-    paddingHorizontal: 7,
-    borderRadius: borderRadius.xs,
-    gap: 4,
-  },
-  priorityChipActive: {
+  optionItemActive: {
     backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
   },
-  priorityDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
+  optionDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
-  priorityText: {
-    fontSize: 11,
-    color: colors.textSecondary,
+  optionTextWrap: {
+    flex: 1,
   },
-  priorityTextActive: {
-    color: '#2563EB',
+  optionLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#0F172A',
+  },
+  optionLabelActive: {
+    color: '#1E40AF',
     fontWeight: '700',
+  },
+  optionSublabel: {
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 2,
   },
 });
